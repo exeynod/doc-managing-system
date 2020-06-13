@@ -1,0 +1,948 @@
+/**********************
+
+Responsive.css
+=============
+
+Author:  Gino Aliaj
+Template: Cariera - Job Board HTML Template
+Version: 1.0
+
+Author URI: gnodesign.com
+***************************/
+
+
+/*------------------------------------------
+  Responsive Grid Media Queries
+--------------------------------------------*/
+
+
+/* ---- Start of min-width 992px and max-width 1024px CSS ---- */
+
+@media all and (min-width: 992px) and (max-width: 1200px) {
+    /**************** 
+		MAIN MENU
+	****************/
+    .navbar .navbar-nav > li > a {
+        padding: 5px;
+    }
+    /**************** 
+		LATEST NEWS SECTION
+	****************/
+    section#latest-news .blog-post .post-info:before,
+    section#latest-news .blog-post .post-info:after {
+        display: none;
+    }
+}
+
+
+/* ---- Start of max-width 992px CSS ---- */
+
+@media (max-width: 992px) {
+    /**************** 
+		MAIN MENU
+	****************/
+    /* Version 1 */
+    nav.navbar {
+        padding: 0;
+    }
+    .navbar-brand img {
+        height: 34px;
+    }
+    .navbar-header {
+        float: right !important;
+    }
+    .navbar-toggle {
+        display: block !important;
+        float: right !important;
+        border-color: #443088 !important;
+        margin-top: 15px;
+        margin-right: 0;
+    }
+    .navbar-default .navbar-toggle .icon-bar {
+        background: #443088;
+    }
+    .navbar-toggle:focus,
+    .navbar-toggle:hover {
+        background: none !important;
+    }
+    .navbar-collapse {
+        display: none;
+    }
+    div#main-nav {
+        max-height: 100% !important;
+        height: 100% !important;
+        border: 0;
+        overflow-y: scroll !important;
+    }
+    div#main-nav ul.nav.navbar-nav {
+        height: 100%;
+        margin: 0;
+        width: 100%;
+    }
+    div#main-nav ul li {
+        width: 100%;
+    }
+    div#main-nav ul li a {
+        padding: 10px 30px;
+        z-index: 100;
+        display: block;
+        border-bottom: 1px solid #e3e3e3;
+    }
+    div#main-nav ul li:last-child a {
+        border-bottom: 0;
+    }
+    div#main-nav ul li.open > a,
+    div#main-nav ul li > a:hover {
+        color: #666 !important;
+    }
+    div#main-nav ul li a i {
+        display: inline-block;
+        float: right;
+    }
+    /* Mobile Menu Title */
+    .navbar .navbar-nav > li.mobile-title {
+        display: block;
+        text-transform: uppercase;
+        color: #666;
+        text-align: center;
+        padding: 25px 0;
+        border-bottom: 1px solid #e3e3e3;
+    }
+    /* Login Button */
+    div#main-nav ul li.login-btn {
+        margin: 25px 0 0 0;
+    }
+    div#main-nav ul li.login-btn a {
+        width: 75%;
+        margin: 0 auto;
+        text-align: center;
+    }
+    div#main-nav ul li.login-btn a:hover {
+        color: #f6f6f6 !important;
+    }
+    div#main-nav ul li.login-btn a i {
+        float: none;
+        padding-right: 5px;
+    }
+    /* Version 2 */
+    .header2 nav {
+        padding: 20px 0;
+    }
+    .header2 .navbar-header {
+        display: inline-block;
+        float: none !important;
+        vertical-align: top;
+        width: 100%;
+        padding-top: 20px;
+    }
+    .header2 .navbar-header .navbar-toggle {
+        float: none !important;
+        margin: 0 auto;
+    }
+    /* Version 3 */
+    .header3 .top-bar,
+    .header3 .top-bar .social-btns {
+        text-align: center;
+    }
+    /*********** Dropdown - Menu *************/
+    #main-nav .navbar-nav .dropdown .dropdown-menu {
+        display: none;
+        position: relative;
+        width: 100%;
+        max-width: 100% !important;
+        background: #f0f0f0;
+        border-radius: 0 !important;
+        border: 0;
+        float: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        left: 0;
+        -webkit-transform: translateX(0);
+        -moz-transform: translateX(0);
+        -ms-transform: translateX(0);
+        -o-transform: translateX(0);
+        transform: translateX(0);
+    }
+    #main-nav .navbar-nav .dropdown.open .dropdown-menu {
+        display: block;
+        -webkit-transform: translateX(0);
+        -moz-transform: translateX(0);
+        -ms-transform: translateX(0);
+        -o-transform: translateX(0);
+        transform: translateX(0);
+    }
+    #main-nav .navbar-nav .dropdown .dropdown-menu li a {
+        color: #999 !important;
+        padding: 10px 0 10px 45px !important;
+        border: 0 !important;
+    }
+    #main-nav .navbar-nav .dropdown-menu > li > a i {
+        right: 30px !important;
+    }
+    #main-nav .navbar-nav .simple-menu .dropdown-menu > .dropdown-submenu.open a i {
+        transform: rotate(90deg);
+    }
+    /****** Mega Menu Dropdown ********/
+    #main-nav .navbar-nav .mega-menu .dropdown-menu li {
+        padding: 0;
+    }
+    #main-nav .navbar-nav .mega-menu.open .dropdown-menu .mega-menu-inner,
+    #main-nav .navbar-nav .mega-menu.open .dropdown-menu .mega-menu-inner ul li {
+        padding: 0;
+    }
+    #main-nav .navbar-nav .mega-menu.open .dropdown-menu .mega-menu-inner ul li.menu-title {
+        background: #e3e3e3;
+        color: #666;
+        padding: 10px 45px;
+        margin: 0;
+        border: 0;
+    }
+    #main-nav .navbar-nav .mega-menu.open .dropdown-menu .mega-menu-inner ul li a {
+        font-size: 12px;
+        color: #999 !important;
+        padding-left: 60px !important;
+    }
+    /****** Dropdown Submenu ********/
+    #main-nav .navbar-nav .simple-menu .dropdown-menu > .dropdown-submenu > a {
+        background: #e3e3e3;
+        color: #666 !important;
+    }
+    #main-nav .navbar-nav .dropdown-menu > .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        left: 0 !important;
+        visibility: visible;
+        display: none;
+        position: relative;
+        width: 100%;
+        max-width: 100% !important;
+        background: #f0f0f0;
+        border-radius: 0 !important;
+        border: 0;
+        float: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        left: 0;
+    }
+    #main-nav .navbar-nav .dropdown-menu > .dropdown-submenu.open > .dropdown-menu {
+        display: block;
+    }
+    #main-nav .navbar-nav .dropdown-menu > .dropdown-submenu.open > .dropdown-menu li a {
+        font-size: 12px;
+        padding-left: 60px !important;
+    }
+    /**************** 
+		PUSH MENU
+	****************/
+    .collapse {
+        display: block !important;
+    }
+    /* General styles for all menus */
+    .cbp-spmenu {
+        background: #f6f6f6;
+        position: fixed;
+        padding: 0;
+        margin: 0 !important;
+        overflow-x: hidden;
+        overflow-y: visible;
+        display: block;
+        visibility: visible !important;
+    }
+    /* Orientation-dependent styles for the content of the menu */
+    .cbp-spmenu-vertical {
+        width: 260px;
+        height: 100%;
+        top: 0;
+        z-index: 1000;
+    }
+    .cbp-spmenu-horizontal {
+        width: 100%;
+        height: 150px;
+        left: 0;
+        z-index: 1000;
+        overflow: hidden;
+    }
+    .cbp-spmenu-horizontal h3 {
+        height: 100%;
+        width: 20%;
+        float: left;
+    }
+    .cbp-spmenu-horizontal a {
+        float: left;
+        width: 20%;
+        padding: 0.8em;
+        border-left: 1px solid #258ecd;
+    }
+    /* Vertical menu that slides from the left or right */
+    .cbp-spmenu-left {
+        left: -260px;
+    }
+    .cbp-spmenu-right {
+        right: -260px;
+    }
+    .cbp-spmenu-left.cbp-spmenu-open {
+        left: 0px;
+    }
+    .cbp-spmenu-right.cbp-spmenu-open {
+        right: 0px;
+    }
+    /* Horizontal menu that slides from the top or bottom */
+    .cbp-spmenu-top {
+        top: -150px;
+    }
+    .cbp-spmenu-bottom {
+        bottom: -150px;
+    }
+    .cbp-spmenu-top.cbp-spmenu-open {
+        top: 0px;
+    }
+    .cbp-spmenu-bottom.cbp-spmenu-open {
+        bottom: 0px;
+    }
+    /* Push classes applied to the body */
+    .cbp-spmenu-push {
+        overflow-x: hidden;
+        position: relative;
+        left: 0;
+    }
+    .cbp-spmenu-push-toright {
+        left: 260px;
+    }
+    .cbp-spmenu-push-toleft {
+        left: -260px;
+    }
+    /* Transitions */
+    .cbp-spmenu,
+    .cbp-spmenu-push {
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -ms-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+    }
+    /**************** 
+		MAIN JOB SECTION
+	****************/
+    form.job-search-form .col-sm-12 {
+        padding-top: 15px;
+    }
+    form.job-search-form .col-sm-12:first-child {
+        padding-top: 0;
+    }
+    /**************** 
+		POPULAR CATEGORIES
+	****************/
+    section#categories .cat-wrapper {
+        margin-bottom: 40px;
+    }
+    section#categories .row .cat-wrapper:nth-child(3),
+    section#categories .row .cat-wrapper:nth-child(4) {
+        margin-bottom: 0;
+    }
+    /**************** 
+		JOB POST SECTION
+	****************/
+    section#job-post h2 {
+        text-align: center;
+    }
+    section#job-post .job-post-sidebar {
+        margin-top: 60px;
+    }
+    /**************** 
+		LATEST NEWS SECTION
+	****************/
+    section#latest-news .col-md-4.col-xs-12 {
+        margin-bottom: 60px;
+    }
+    section#latest-news .col-md-4.col-xs-12:nth-child(4) {
+        margin-bottom: 0;
+    }
+    section#latest-news .blog-post .post-info:before,
+    section#latest-news .blog-post .post-info:after {
+        display: none;
+    }
+    section#latest-news .blog-post .post-info {
+        padding: 40px;
+        text-align: center;
+    }
+    /* Version 3 */
+    section#latest-news2 .blog-post-featured {
+        margin-top: 40px;
+    }
+    /**************** 
+		CARIERA APP SECTION
+	****************/
+    section.cariera-app {
+        text-align: center;
+    }
+    /**************** 
+		FOOTERS
+	****************/
+    /****** Footer 1 ********/
+    footer .footer-info .col-sm-6.col-xs-6 {
+        margin-bottom: 60px;
+    }
+    footer .footer-info .col-sm-6.col-xs-6:nth-child(3),
+    footer .footer-info .col-sm-6.col-xs-6:nth-child(4) {
+        margin-bottom: 0;
+    }
+    footer .footer-info .footer-posts {
+        clear: both;
+    }
+    .footer4 .footer-info .col-sm-6.col-xs-6 {
+        margin-bottom: 0;
+    }
+    /**************** 
+		PAGES
+	****************/
+    /****** Contact Us ********/
+    .gmaps {
+        margin-top: 40px;
+    }
+    .gmaps #map {
+        width: 100%;
+    }
+    /****** Job Page ********/
+    section.job-header {
+        text-align: center;
+    }
+    section.job-header .btn-blue {
+        float: none !important;
+        margin-top: 40px;
+    }
+    section#job-page .company-info .job-company {
+        margin: 0 auto;
+    }
+    section#job-page .company-info .job-company-info {
+        text-align: center;
+    }
+    section#job-page .job-sidebar {
+        margin-top: 60px;
+    }
+    /****** 404 ********/
+    section#page-not-found {
+        background: #fff;
+    }
+    /****** Candidate Profile ********/
+    section#candidate-profile .candidate-profile .profile-descr {
+        margin-top: 60px;
+    }
+    section#candidate-profile .profile-info li {
+        width: 49%;
+    }
+    /****** Company Page ********/
+    section#company-profile .company-profile .profile-photo {
+        width: 50%;
+        margin: 0 auto;
+    }
+    .company-profile .profile-descr {
+        text-align: center;
+        margin-top: 60px;
+    }
+    section#company-profile2 .company-profile .profile-descr {
+        margin-top: 0;
+    }
+    section#company-profile .profile-info li {
+        width: 30%;
+    }
+    /****** Search Jobs ********/
+    section.search-jobs .job-post-sidebar {
+        margin-bottom: 80px;
+    }
+    /****** About Us ********/
+    section.about-us .about-video {
+        margin-top: 60px;
+    }
+    section.about-process .col-md-4 {
+        margin-bottom: 60px;
+    }
+    section.about-process .col-md-4:last-child {
+        margin-bottom: 0;
+    }
+    /****** Pricing Tables ********/
+    .pricing-table {
+        margin-top: 80px;
+    }
+    .pricing-table:first-child {
+        margin-top: 0;
+    }
+    /**************** 
+		BLOG
+	****************/
+    /****** Blog Listing - Version 1 ********/
+    section#version1.blog-listing article.blog-post .blog-thumbnail img {
+        height: 350px;
+    }
+    section#version1.blog-listing article.blog-post .blog-desc {
+        padding-left: 0;
+        margin-top: 40px;
+    }
+    /****** Blog - Sidebar ********/
+    .blog-sidebar {
+        margin-top: 80px;
+    }
+    /****** Single Blog Post ********/
+    section#blog-post .post-content-wrapper {
+        padding: 0;
+    }
+    section#blog-post ul.social li {
+        margin-bottom: 20px;
+    }
+    section#blog-post .post-quote blockquote {
+        padding: 100px 0;
+    }
+    /**************** 
+		SHOP
+	****************/
+    /****** Shop - Sidebar ********/
+    .shop-sidebar {
+        margin-top: 80px;
+    }
+    /****** Cart Page *******/
+    .cart-item .proceed-checkout {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .cart-total {
+        margin-top: 60px;
+    }
+    .cart-total h4 {
+        padding: 20px !important;
+    }
+    /* Checkout Page */
+    section.shop .collapse {
+        display: none !important;
+    }
+    section.shop .collapse.in {
+        display: block !important;
+    }
+}
+
+
+/* ---- End of max-width 992px CSS ---- */
+
+
+/* ---- Start of min-width 480px and max-width 768px CSS ---- */
+
+@media all and (min-width: 480px) and (max-width: 768px) {}
+
+
+/* ---- End of min-width 480px and max-width 768px CSS ---- */
+
+
+/* ---- Start of max-width 767px CSS ---- */
+
+@media all and (max-width: 767px) {
+    /**************** 
+		MAIN JOB SECTION
+	****************/
+    section#main h1 {
+        font-size: 45px;
+    }
+    /* version 2 */
+    .swiper-button-next,
+    .swiper-button-prev {
+        display: none;
+    }
+    /**************** 
+		POPULAR CATEGORIES
+	****************/
+    section#categories .row .cat-wrapper:nth-child(3) {
+        margin-bottom: 40px;
+    }
+    section#categories .category .category-descr {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+    /**************** 
+		COUNTUP SECTION
+	****************/
+    section#countup .container > div {
+        margin-bottom: 40px;
+    }
+    section#countup .container > div:last-child {
+        margin-bottom: 0;
+    }
+    /**************** 
+		TESTIMONIALS SECTION
+	****************/
+    .testimonial .owl-item .item .review blockquote {
+        padding: 80px 40px;
+    }
+    /**************** 
+		GET STARTED SECTION
+	****************/
+    section.get-started {
+        text-align: center;
+    }
+    section.get-started a {
+        margin-top: 30px;
+    }
+    /**************** 
+		FOOTERS
+	****************/
+    /****** Footer 1 *******/
+    footer .footer-info .footer-newsletter .supporter-image {
+        margin: 15px !important;
+    }
+    footer .copyright {
+        text-align: center;
+    }
+    footer .social-btns {
+        text-align: center !important;
+    }
+    /**************** 
+		PAGES
+	****************/
+    /****** Page Headers *******/
+    section.page-header2 {
+        text-align: center;
+    }
+    section.page-header2 .breadcrumb {
+        text-align: center;
+    }
+    section.page-header3 {
+        text-align: center;
+    }
+    section.page-header3 .breadcrumb {
+        text-align: center;
+    }
+    /****** Coming Soon Page *******/
+    .coming-soon {
+        background: -moz-linear-gradient(to right, #29b2fe -20%, #443088 120%);
+        background: -webkit-linear-gradient(to right, #29b2fe -20%, #443088 120%);
+        background: linear-gradient(to right, #29b2fe -20%, #443088 120%);
+    }
+    .coming-main .mailchimp .form-group input,
+    .coming-main .mailchimp .form-group button {
+        display: inline-block;
+    }
+    /**************** 
+		SHOP
+	****************/
+    /****** Cart Page *******/
+    table.cart .quantity .minus,
+    table.cart .quantity .plus,
+    table.cart .quantity .qty {
+        float: none;
+        width: 100%;
+    }
+}
+
+
+/* ---- End of max-width 767px CSS ---- */
+
+
+/* ---- Start of max-width 580px CSS ---- */
+
+@media all and (max-width: 580px) {
+    /**************** 
+		JOB POST SECTION
+	****************/
+    .job-post-wrapper .single-job-post {
+        padding: 30px 15px;
+    }
+    .job-post-wrapper .single-job-post > div {
+        width: 100%;
+        text-align: center;
+    }
+    .job-post-wrapper .single-job-post > div:last-child {
+        padding: 0;
+    }
+    .job-post-wrapper .single-job-post .job-company {
+        margin: 0 auto;
+    }
+    .job-post-wrapper .single-job-post .job-title,
+    .job-post-wrapper .single-job-post .job-info {
+        padding: 0;
+    }
+    .job-post-wrapper .single-job-post .job-category {
+        float: none;
+    }
+    /**************** 
+		LATEST NEWS SECTION
+	****************/
+    section#latest-news .blog-post .post-info {
+        padding: 40px 20px;
+    }
+    /**************** 
+		FOOTERS
+	****************/
+    footer .footer-info .col-sm-6.col-xs-6 {
+        width: 100%;
+    }
+    footer .footer-info .col-sm-6.col-xs-6:nth-child(3) {
+        margin-bottom: 60px;
+    }
+    /****** Footer 4 *******/
+    .footer4 .footer-info .col-sm-6.col-xs-6:nth-child(1) {
+        margin-bottom: 60px;
+    }
+    /**************** 
+		PAGES
+	****************/
+    /****** Find Candidates Page *******/
+    section.find-candidate form div:first-child {
+        width: 100%;
+    }
+    section.find-candidate form div:last-child {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+    section.find-candidate .candidate-wrapper .single-candidate {
+        padding: 30px 15px;
+    }
+    section.find-candidate .candidate-wrapper .single-candidate > div {
+        width: 100%;
+        text-align: center;
+    }
+    section.find-candidate .candidate-wrapper .single-candidate .candidate-img {
+        margin: 0 auto;
+    }
+    section.find-candidate .candidate-wrapper .single-candidate .candidate-cta {
+        float: none;
+        padding: 0
+    }
+    /****** Company Page ********/
+    section#company-profile .company-profile .profile-photo {
+        width: 100%;
+    }
+    section#company-profile .company-profile > div:first-child {
+        width: 100%;
+        margin-left: 0;
+    }
+    section#company-profile .profile-info li {
+        width: 100%;
+    }
+    section.company-jobs .single-job-post {
+        padding: 30px 15px;
+    }
+    section.company-jobs .single-job-post > div {
+        width: 100%;
+        text-align: center;
+    }
+    section.company-jobs .single-job-post > div:last-child {
+        padding: 0;
+    }
+    section.company-jobs .single-job-post .job-company {
+        margin: 0 auto;
+    }
+    section.company-jobs .single-job-post .job-title,
+    section.company-jobs .single-job-post .job-info {
+        padding: 0;
+    }
+    section.company-jobs .single-job-post .job-category {
+        float: none;
+    }
+    /**************** 
+		BLOG
+	****************/
+    /****** Single Blog Post ********/
+    #blog-comments .comments-list .comment-replies {
+        margin-left: -50px;
+    }
+    #blog-comments .comments-list .comment-replied:before {
+        content: '\f148';
+        font-family: 'fontawesome';
+        position: absolute;
+        left: 20px;
+        font-size: 28px;
+        transform: scaleX(-1);
+        color: #999;
+        opacity: .5;
+    }
+}
+
+
+/* ---- End of max-width 580px CSS ---- */
+
+
+/* ---- Start of max-width 480px CSS ---- */
+
+@media all and (max-width: 480px) {
+    /**************** 
+		LATEST NEWS SECTION
+	****************/
+    /* Version 3 */
+    section#latest-news2 .blog-post .post-info,
+    section#latest-news2 .blog-post-featured .post-info {
+        padding-left: 20px;
+    }
+    section#latest-news2 .blog-post-featured {
+        height: 400px;
+    }
+    /**************** 
+		PAGES
+	****************/
+    /****** Coming Soon Page *******/
+    .coming-main h3 {
+        padding-top: 20px;
+    }
+    .coming-main .mailchimp .form-group input,
+    .coming-main .mailchimp .form-group button {
+        width: 100%;
+    }
+    .coming-main .mailchimp .form-group button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    /****** Candidate Profile ********/
+    section#candidate-profile .profile-title {
+        text-align: center;
+    }
+    section#candidate-profile .profile-info li {
+        width: 100%;
+    }
+    .skill-bar-percent {
+        display: none;
+    }
+    section.portfolio .portfolio-grid .element {
+        width: 100%;
+    }
+    section.education .item-block .education-header {
+        text-align: center;
+    }
+    section.education .item-block .education-header img {
+        float: none;
+        margin: 0;
+    }
+    section.education .item-block .education-header > div {
+        margin-top: 20px;
+    }
+    section.education .item-block .education-header > div h5 {
+        padding-top: 10px;
+    }
+    section.education .item-block .education-header h6 {
+        float: none !important;
+        padding-top: 20px;
+        line-height: 1 !important;
+    }
+    section.work-experience .item-block .experience-header {
+        text-align: center;
+    }
+    section.work-experience .item-block .experience-header img {
+        float: none;
+        display: block;
+        margin: 0 auto;
+    }
+    section.work-experience .item-block .experience-header > div {
+        margin-top: 20px;
+        display: block;
+    }
+    section.work-experience .item-block .experience-header h6 {
+        float: none !important;
+        padding-top: 10px;
+        line-height: 1 !important;
+    }
+    /****** Search Jobs ********/
+    section#version4.search-jobs .item-block .job-post-header {
+        text-align: center;
+    }
+    section#version4.search-jobs .item-block .job-post-header img {
+        float: none;
+        display: block;
+        margin: 0 auto;
+    }
+    section#version4.search-jobs .item-block .job-post-header > div {
+        margin-top: 20px;
+        display: block;
+    }
+    section#version4.search-jobs .item-block .job-post-header > ul {
+        float: none !important;
+        padding: 0;
+        text-align: center;
+        margin-top: 20px;
+    }
+    section#version4.search-jobs .item-block .job-post-footer > div {
+        padding: 5px 0;
+    }
+    /**************** 
+		SHOP
+	****************/
+    /****** Single Product Page *******/
+    .product-wrapper .comments-list .comment-body .comment-rating {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 5px 0;
+    }
+}
+
+
+/* ---- End of max-width 480px CSS ---- */
+
+
+/* ---- Start of max-width 420px CSS ---- */
+
+@media all and (max-width: 420px) {
+    /**************** 
+		SLIDER
+	****************/
+    /**************** 
+		PAGES
+	****************/
+    /****** Login - Register Page ********/
+    section#login .login-box form {
+        padding: 40px 20px;
+    }
+    section#login .login-box form .col-xs-6 {
+        width: 100%;
+        text-align: center;
+        padding-top: 10px;
+    }
+}
+
+
+/* ---- End of max-width 420px CSS ---- */
+
+
+/* ---- Start of max-width 380px CSS ---- */
+
+@media all and (max-width: 380px) {
+    /**************** 
+		CARIERA APP SECTION
+	****************/
+    section.cariera-app .app-wrapper {
+        height: 200px;
+    }
+}
+
+
+/* ---- End of max-width 380px CSS ---- */
+
+
+/* ---- Start of max-width 350px CSS ---- */
+
+@media all and (max-width: 350px) {
+    /**************** 
+		JOB POST SECTION
+	****************/
+    ul.pagination li a {
+        margin-bottom: 15px;
+        display: inline-block;
+    }
+    .featured-job-info .job-title h5,
+    .featured-job-info .job-title a {
+        float: none !important;
+    }
+    /**************** 
+		BLOG
+	****************/
+    /****** Single Blog Post ********/
+    #blog-comments .comments-list .comment-body .comment-reply {
+        margin: 0;
+    }
+}
+
+
+/* ---- End of max-width 350px CSS ---- */
+
+
+/* ---- Start of max-height 420px CSS ---- */
+
+@media screen and (max-height: 420px) {}
