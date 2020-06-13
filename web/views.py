@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 def index(request):
-    return render(request, 'web/index.html', context={'user': request.user})
+    return render(request, 'web/main.html')
 
 
 def log_in(request):
