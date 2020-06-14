@@ -26,20 +26,24 @@
                     <li class="list-group-item p-3">
                       <div class="row">
                         <div class="col-sm-12">
-                          <form>
+                          <form method="post" action="{% url 'web:login' %}">
+                              {% csrf_token %}
                             <div class="form-group">
                               <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">@</span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1"> </div>
+                                <input type="text" name="email" class="form-control" placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1"> </div>
                             </div>
                             <div class="form-group">
-                              <input type="password" class="form-control" id="inputPassword4" placeholder="Password" value=""> </div>
+                              <input type="password" name="password" class="form-control" id="inputPassword4" placeholder="Password" value=""> </div>
                                <div class="form-group">
-                          		<button type="button" class="mb-2 btn btn-outline-primary mr-2" id="loginButton">Log in</button>
+                          		<button type="submit" class="mb-2 btn btn-outline-primary mr-2" id="loginButton">Log in</button>
                           		</div>
-                          		<div id="registered" style="display: flex;"><h6 class="p-2">Not a member yet? </h6><a class="p-2" href="javascript:switchForms();">Register now!</a></div>
+                          		<div id="registered" style="display: flex;"><h6 class="p-2">Not a member yet? </h6>
+                                    <a class="p-2" href="javascript:switchForms();">Register now!</a>
+                                <a class="p-2">or</a>
+                              <a class="p-2" href="javascript:registerCompany();">Register company</a></div>
                           	</form>
                             </div>
                           </form>
@@ -58,17 +62,18 @@
                     <li class="list-group-item p-3">
                       <div class="row">
                         <div class="col-sm-12">
-                          <form onsubmit="return formValidation();">
+                          <form onsubmit="return formValidation();" method="post" action="{% url 'web:signup' %}">
+                              {% csrf_token %}
                             <div class="form-group">
                               <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">@</span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerEmail"> </div>
+                                <input type="text" class="form-control" name="email" placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerEmail"> </div>
                             </div>
                                 <small class="errorReq"  style="display: none; color: red;" id="errorEmail"><i></i> Wrong email </small>
                             <div class="form-group">
-                              <input type="password" class="form-control" id="registerInputPassword" placeholder="Password" value=""> </div>
+                              <input type="password" class="form-control" name="password" id="registerInputPassword" placeholder="Password" value=""> </div>
                               <small class="errorReq"  style="display: none; color: red;" id="errorPass"><i></i> Password does not match</small>
                               <div class="form-group">
                               <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
@@ -77,6 +82,44 @@
                           		</div>
                           		
                           		<div id="loginHint" style="display: none;"><h6 class="p-2">Already registered? </h6><a class="p-2" href="javascript:switchForms();">Log in</a></div>
+                          	</form>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </div>
+    <div class="col-lg-8 mx-auto" style="display: none;" id="registerCompanyForm">
+                <div class="card card-small mb-4">
+                	<div class="card-header border-bottom">
+                    <h6 class="m-0">Registration</h6>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item p-3">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <form method="post" action="{% url 'web:signup' %}">
+                              {% csrf_token %}
+                            <div class="form-group">
+                              <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text" id="basic-addon1">@</span>
+                                </div>
+                                <input type="text" class="form-control" name="email"
+                                       placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerCompanyEmail"> </div>
+                            </div>
+                              <div class="form-group">
+                              <input type="text" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
+                               <div class="form-group">
+                          		<button type="submit" class="mb-2 btn btn-outline-primary mr-2">Sign up</button>
+                                   <a class="mx-2">Not a company?</a>
+                                <button type="button" class="mb-2 btn btn-sm btn-outline-primary mr-1" onclick="registerCompany();">
+                                    Sign up as member</button>
+                               </div>
                           	</form>
                             </div>
                           </form>

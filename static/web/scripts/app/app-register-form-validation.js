@@ -29,7 +29,7 @@ function correctEmail(emailId) {
 }
 
 function matchesPasswords(p1, p2) {
-	if (p1.value == p2.value)
+	if (p1.value === p2.value)
 		return true;
 	return false;
 }
@@ -41,7 +41,7 @@ function switchForms()
 	var registerFormId = document.getElementById('registerForm');
 	var notAmemberHint = document.getElementById('registered');
 	var alreadyRegisteredHint = document.getElementById('loginHint');
-	if (loginFormid.style.display != 'none') {
+	if (loginFormid.style.display !== 'none') {
 		loginFormid.style.display = 'none';
 		notAmemberHint.style.display = 'none';
 
@@ -56,6 +56,21 @@ function switchForms()
 		registerForm.style.display = 'none';
 		alreadyRegisteredHint.style.display = 'none';
 		loginFormButtonId.value = "Log in";
+	}
+	return false;
+}
+
+function registerCompany() {
+	var loginFormId = document.getElementById("loginForm");
+	var registerCompanyId = document.getElementById("registerCompanyForm");
+
+	if (registerCompanyId.style.display === "none") {
+		loginFormId.style.display = "none";
+		registerCompanyId.style.display = "block";
+	}
+	else {
+		loginFormId.style.display = "block";
+		registerCompanyId.style.display = "none";
 	}
 	return false;
 }
