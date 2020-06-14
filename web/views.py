@@ -2,17 +2,19 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponsePermanentRedirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 
 def index(request):
-    return render(request, 'web/main.html')
+    groups = Group.objects.all()
+    context = {'companies': groups}
+    return render(request, 'web/main.html', context=context)
 
 
 def log_in(request):
-    username = request.POST.get('username', '')
+    email = request.POST.get('email', '')
     password = request.POST.get('password', '')
-    user = authenticate(username=username, password=password)
+    user = authenticate(username=email, password=password)
     if user is not None:
         login(request, user)
     return render(request, 'web/index.html')

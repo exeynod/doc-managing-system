@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Shards Dashboard Lite - Free Bootstrap Admin Template – DesignRevision</title>
+    <title>Documentooborot</title>
     <meta name="description" content="A high-quality &amp; free Bootstrap admin dashboard template pack that comes with lots of templates and components.">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
@@ -42,12 +42,11 @@
                           		</div>
                           		<div id="registered" style="display: flex;"><h6 class="p-2">Not a member yet? </h6>
                                     <a class="p-2" href="javascript:switchForms();">Register now!</a>
-                                <a class="p-2">or</a>
-                              <a class="p-2" href="javascript:registerCompany();">Register company</a></div>
+{#                                <a class="p-2">or</a>#}
+{#                              <a class="p-2" href="javascript:registerCompany();">Register company</a>#}
+                                </div>
                           	</form>
                             </div>
-                          </form>
-                        </div>
                       </div>
                     </li>
                   </ul>
@@ -77,6 +76,19 @@
                               <small class="errorReq"  style="display: none; color: red;" id="errorPass"><i></i> Password does not match</small>
                               <div class="form-group">
                               <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
+
+                              <div class="form-group" id="Select company dropdown">
+                                    <select class="custom-select custom-select-sm" style="max-width: 130px;" id="selectCompany">
+                                      <option selected>Choose company</option>
+                                        {% if companies %}
+                                            {% for company in companies %}
+                                                <option value="{{ company }}">{{ company }}</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                              <small class="errorReq"  style="display: none; color: red;" id="errorSelect"><i></i> Choose company</small>
+                              </div>
+
                                <div class="form-group">
                           		<button type="submit" class="mb-2 btn btn-outline-primary mr-2">Sign up</button>
                           		</div>
@@ -93,44 +105,44 @@
               </div>
             </div>
         </div>
-    <div class="col-lg-8 mx-auto" style="display: none;" id="registerCompanyForm">
-                <div class="card card-small mb-4">
-                	<div class="card-header border-bottom">
-                    <h6 class="m-0">Registration</h6>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item p-3">
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <form method="post" action="{% url 'web:signup' %}">
-                              {% csrf_token %}
-                            <div class="form-group">
-                              <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon1">@</span>
-                                </div>
-                                <input type="text" class="form-control" name="email"
-                                       placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerCompanyEmail"> </div>
-                            </div>
-                              <div class="form-group">
-                              <input type="text" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
-                               <div class="form-group">
-                          		<button type="submit" class="mb-2 btn btn-outline-primary mr-2">Sign up</button>
-                                   <a class="mx-2">Not a company?</a>
-                                <button type="button" class="mb-2 btn btn-sm btn-outline-primary mr-1" onclick="registerCompany();">
-                                    Sign up as member</button>
-                               </div>
-                          	</form>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-        </div>
+{#    <div class="col-lg-8 mx-auto" style="display: none;" id="registerCompanyForm">#}
+{#                <div class="card card-small mb-4">#}
+{#                	<div class="card-header border-bottom">#}
+{#                    <h6 class="m-0">Registration</h6>#}
+{#                  </div>#}
+{#                  <ul class="list-group list-group-flush">#}
+{#                    <li class="list-group-item p-3">#}
+{#                      <div class="row">#}
+{#                        <div class="col-sm-12">#}
+{#                          <form method="post" action="{% url 'web:signup' %}">#}
+{#                              {% csrf_token %}#}
+{#                            <div class="form-group">#}
+{#                              <div class="input-group mb-3">#}
+{#                                <div class="input-group-prepend">#}
+{#                                  <span class="input-group-text" id="basic-addon1">@</span>#}
+{#                                </div>#}
+{#                                <input type="text" class="form-control" name="email"#}
+{#                                       placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerCompanyEmail"> </div>#}
+{#                            </div>#}
+{#                              <div class="form-group">#}
+{#                              <input type="text" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>#}
+{#                               <div class="form-group">#}
+{#                          		<button type="submit" class="mb-2 btn btn-outline-primary mr-2">Sign up</button>#}
+{#                                   <a class="mx-2">Not a company?</a>#}
+{#                                <button type="button" class="mb-2 btn btn-sm btn-outline-primary mr-1" onclick="registerCompany();">#}
+{#                                    Sign up as member</button>#}
+{#                               </div>#}
+{#                          	</form>#}
+{#                            </div>#}
+{#                          </form>#}
+{#                        </div>#}
+{#                      </div>#}
+{#                    </li>#}
+{#                  </ul>#}
+{#                </div>#}
+{#              </div>#}
+{#            </div>#}
+{#        </div>#}
         <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}" ></script>
   </body>
 </html>

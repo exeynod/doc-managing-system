@@ -5,6 +5,9 @@ var passid = document.getElementById('registerInputPassword');
 var repeatPassid = document.getElementById('repeatPassword');
 var erremailid = document.getElementById('errorEmail');
 var errpassid = document.getElementById('errorPass');
+var selectCompanyId = document.getElementById('selectCompany');
+var selectError = document.getElementById('errorSelect');
+
 if (!correctEmail(emailid)) {
 	erremailid.style.display = "block";
 	return false;
@@ -19,6 +22,10 @@ if(!matchesPasswords(passid, repeatPassid)) {
 else {
 	errpassid.style.display = "none";
 }
+if (!companyChoosed(selectCompanyId)) {
+	selectError.style.display = "block";
+	return false;
+}
 return true;
 }
 
@@ -31,6 +38,13 @@ function correctEmail(emailId) {
 function matchesPasswords(p1, p2) {
 	if (p1.value === p2.value)
 		return true;
+	return false;
+}
+
+function companyChoosed(propertiesId) {
+	if (propertiesId.selectedIndex !== 0) {
+		return true;
+	}
 	return false;
 }
 
