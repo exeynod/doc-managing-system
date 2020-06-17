@@ -37,7 +37,7 @@
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="index.html">
+                <a class="nav-link active" href="{% url 'web:login' %}">
                   <i class="material-icons">edit</i>
                   <span>Blog Dashboard</span>
                 </a>
@@ -49,9 +49,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="add-new-post.html">
+                <a class="nav-link " href="{% url 'web:new-post' %}">
                   <i class="material-icons">note_add</i>
-                  <span>Add New Post</span>
+                  <span>Add New Document</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -93,6 +93,7 @@
                       <i class="fas"></i>
                     </div>
                   </div>
+                </div>
                   <div class="navbar-search form-control"> </div>
               </form>
                 <!-- Уведомления -->
@@ -171,7 +172,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Posts</span>
+                        <span class="stats-small__label text-uppercase">Скоро истекает срок</span>
                         <h6 class="stats-small__value count my-3">2,390</h6>
                       </div>
                       <div class="stats-small__data">
