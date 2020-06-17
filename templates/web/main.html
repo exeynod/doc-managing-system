@@ -78,11 +78,11 @@
                               <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
 
                               <div class="form-group" id="Select company dropdown">
-                                    <select class="custom-select custom-select-sm" style="max-width: 130px;" id="selectCompany">
+                                    <select class="custom-select custom-select-sm" style="max-width: 130px;" id="selectCompany" name="select-company">
                                       <option selected>Choose company</option>
                                         {% if companies %}
                                             {% for company in companies %}
-                                                <option value="{{ company }}">{{ company }}</option>
+                                                <option value="{{ forloop.counter }}">{{ company }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>

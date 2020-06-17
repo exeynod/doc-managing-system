@@ -24,7 +24,7 @@
       modules: {
         toolbar: toolbarOptions
       },
-      placeholder: 'Words can be like x-rays if you use them properly...',
+      placeholder: 'File description (optional)',
       theme: 'snow'
     });
 

@@ -13,15 +13,15 @@ def index(request):
 
 def log_in(request):
     user = get_user(request)
-    if user is AnonymousUser:
+    if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-        else:
-            return render(request, 'web/errors.html')
     # Вписываем уведомления пользователя
+    if user is None:
+        return render(request, 'web/errors.html')
     username = user.username
     notifications = user.profile.notifications
     context = {'username': username, 'notifications': notifications}
@@ -37,8 +37,12 @@ def signup(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        User.objects.create_user(email, password)
-    return log_in(request)
+        groupName = request.POST.get('select-company')
+        group = Group.objects.get(name=groupName)
+        user = User.objects.create_user(email, password)
+        user.groups.set([group])
+        user.save()
+    return redirect('web:login')
 
 
 def new_post(request):
@@ -47,6 +51,11 @@ def new_post(request):
         # Вписываем уведомления пользователя
         username = user.username
         notifications = user.profile.notifications
-        context = {'username': username, 'notifications': notifications}
+        persons = list()
+        for group in user.groups.all():
+            users = User.objects.filter(groups=Group.objects.get(name=group.name))
+            for user in users:
+                persons.append(user.username)
+        context = {'username': username, 'notifications': notifications, 'persons': persons}
         return render(request, 'web/add-new-post.html', context)
     return render(request, 'web/errors.html')
