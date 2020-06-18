@@ -82,7 +82,7 @@
                                       <option selected>Choose company</option>
                                         {% if companies %}
                                             {% for company in companies %}
-                                                <option value="{{ forloop.counter }}">{{ company }}</option>
+                                                <option value="{{ company }}">{{ company }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>

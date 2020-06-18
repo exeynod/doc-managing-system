@@ -88,3 +88,49 @@ function registerCompany() {
 	}
 	return false;
 }
+
+function postValidation() {
+	var filenameId = document.getElementById('Filename');
+	var firstSelect = document.getElementById('selectUser-1');
+	var date = new Date(document.getElementById('Deadline').value);
+	var fileId = document.getElementById('File')
+
+	var errorFilename = document.getElementById('emptyFilename');
+	var errorSelect = document.getElementById('emptySelect');
+	var errorDeadline = document.getElementById('emptyDeadline');
+	var emptyFileId = document.getElementById('emptyFile');
+
+	errorFilename.style.display = 'none';
+	errorSelect.style.display = 'none';
+	errorDeadline.style.display = 'none';
+	emptyFileId.style.display = 'none';
+
+	if (filenameId.value === '') {
+		errorFilename.style.display = 'block';
+		return false;
+	}
+	if (firstSelect.value === 'Choose recipients') {
+		errorSelect.style.display = 'block';
+		return false;
+	}
+	if (isNaN(date)) {
+		errorDeadline.style.display = 'block';
+		return false;
+	}
+	if (fileId.files.length === 0) {
+		emptyFileId.style.display = 'block';
+		return false;
+	}
+	add_hidden_input();
+	return true;
+}
+
+function add_hidden_input() {
+    var rows = document.getElementsByClassName('ql-editor')[0].getElementsByTagName('p');
+    var data = String();
+    for (let i = 0; i < rows.length; i++) {
+    	data += rows[i].innerHTML;
+	}
+	var descriptionId = document.getElementById('description');
+    descriptionId.value = data;
+}

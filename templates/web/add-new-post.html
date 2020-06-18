@@ -104,7 +104,7 @@
                     <div class="nav-link-icon__wrapper">
                       <i class="material-icons">&#xE7F4;</i>
                         {% if notifications %}
-                      <span class="badge badge-pill badge-danger">len(notifications)</span>
+                      <span class="badge badge-pill badge-danger">{{ notifications|length }}</span>
                          {% endif %}
                     </div>
                   </a>
@@ -118,7 +118,7 @@
                         </div>
                       </div>
                       <div class="notification__content">
-                        <p>notification</p>
+                        <p>{{ notification }}</p>
                       </div>
                     </a>
                   </div>
@@ -163,109 +163,29 @@
               </div>
             </div>
             <!-- End Page Header -->
-            <!-- Small Stats Blocks -->
-            <div class="row">
-              <div class="col-lg col-md-6 col-sm-6 mb-4" onclick="window.location.href='{% url "web:index" %}'">
-                <div class="stats-small stats-small--1 card card-small">
-                  <div class="card-body p-0 d-flex">
-                    <div class="d-flex flex-column m-auto">
-                      <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Скоро истекает срок</span>
-                        <h6 class="stats-small__value count my-3">2,390</h6>
-                      </div>
-                      <div class="stats-small__data">
-                        <span class="stats-small__percentage stats-small__percentage--increase">4.7%</span>
-                      </div>
-                    </div>
-                    <canvas height="120" class="blog-overview-stats-small-1"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg col-md-6 col-sm-6 mb-4">
-                <div class="stats-small stats-small--1 card card-small">
-                  <div class="card-body p-0 d-flex">
-                    <div class="d-flex flex-column m-auto">
-                      <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Pages</span>
-                        <h6 class="stats-small__value count my-3">182</h6>
-                      </div>
-                      <div class="stats-small__data">
-                        <span class="stats-small__percentage stats-small__percentage--increase">12.4%</span>
-                      </div>
-                    </div>
-                    <canvas height="120" class="blog-overview-stats-small-2"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg col-md-4 col-sm-6 mb-4">
-                <div class="stats-small stats-small--1 card card-small">
-                  <div class="card-body p-0 d-flex">
-                    <div class="d-flex flex-column m-auto">
-                      <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Comments</span>
-                        <h6 class="stats-small__value count my-3">8,147</h6>
-                      </div>
-                      <div class="stats-small__data">
-                        <span class="stats-small__percentage stats-small__percentage--decrease">3.8%</span>
-                      </div>
-                    </div>
-                    <canvas height="120" class="blog-overview-stats-small-3"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg col-md-4 col-sm-6 mb-4">
-                <div class="stats-small stats-small--1 card card-small">
-                  <div class="card-body p-0 d-flex">
-                    <div class="d-flex flex-column m-auto">
-                      <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Users</span>
-                        <h6 class="stats-small__value count my-3">2,413</h6>
-                      </div>
-                      <div class="stats-small__data">
-                        <span class="stats-small__percentage stats-small__percentage--increase">12.4%</span>
-                      </div>
-                    </div>
-                    <canvas height="120" class="blog-overview-stats-small-4"></canvas>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg col-md-4 col-sm-12 mb-4">
-                <div class="stats-small stats-small--1 card card-small">
-                  <div class="card-body p-0 d-flex">
-                    <div class="d-flex flex-column m-auto">
-                      <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Subscribers</span>
-                        <h6 class="stats-small__value count my-3">17,281</h6>
-                      </div>
-                      <div class="stats-small__data">
-                        <span class="stats-small__percentage stats-small__percentage--decrease">2.4%</span>
-                      </div>
-                    </div>
-                    <canvas height="120" class="blog-overview-stats-small-5"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <form class="add-new-post" method="post" onsubmit="return postValidation();" enctype="multipart/form-data" action="{% url 'web:add-post' %}">
+              {% csrf_token %}
               <div class="row">
               <div class="col-lg-9 col-md-12">
                 <!-- Add New Post Form -->
                 <div class="card card-small mb-3">
                   <div class="card-body">
-                    <form class="add-new-post">
-                      <input class="form-control form-control-lg mb-3" type="text" placeholder="Filename">
+                      <input class="form-control form-control-lg mb-1" type="text" placeholder="Filename" id="Filename" name="Filename">
+                        <small class="errorReq mb-3"  style="display: none; color: red;" id="emptyFilename"><i></i> This field can't be empty</small>
                       <div id="editor-container" class="add-new-post__editor mb-1"></div>
-                    </form>
+                      <input name="description" value="" style="display: none;" id="description">
                   </div>
                 </div>
                 <!-- / Add New Post Form -->
               </div>
+                {% if persons %}
               <div class="col-lg-3 col-md-12">
                 <!-- Post Overview -->
                 <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
-                    <h6 class="m-0">Categories</h6>
+                    <h6 class="m-0">Recipients</h6>
+                  <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Choose at least one recipient</small>
                   </div>
-                {% if persons %}
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
                     {% if persons|length < 5 %}
@@ -275,8 +195,8 @@
                         <!-- Начало блока инициации цепочки пользователей -->
                       <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">{{ forloop.counter }}</span>
-                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectCompany" name="select-company">
-                                      <option selected>Выберите получателей</option>
+                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectUser-{{ forloop.counter }}" name="selectUser-{{ forloop.counter }}">
+                                      <option selected>Choose recipients</option>
                                             {% for person in persons %}
                                                 <option value="{{ person }}">{{ person }}</option>
                                             {% endfor %}
@@ -291,19 +211,18 @@
                         <!-- Начало блока инициации цепочки пользователей -->
                       <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">{{ i }}</span>
-                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectCompany" name="select-company">
+                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectUser-{{ forloop.counter }}" name="selectUser-{{ forloop.counter }}">
                                       <option selected>Выберите получателей</option>
                                             {% for person in persons %}
                                                 <option value="{{ person }}">{{ person }}</option>
                                             {% endfor %}
                                     </select>
-                              <small class="errorReq"  style="display: none; color: red;" id="errorSelect"><i></i> Choose company</small>
                               </div>
                         <!-- Конеч цепочки подписей -->
                       </li>
                       {% endfor %}
-                    {% endif %}
                       <button class="btn btn-sm btn-accent ml-auto"> Add more users</button>
+                    {% endif %}
                     </ul>
                   </div>
                 {% endif %}
@@ -316,35 +235,34 @@
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item p-3">
-                        <input type="date">
+                        <input type="date" id="Deadline" value="" name="Date"><br>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyDeadline"><i></i> Date field can't be empty</small>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              <div class='card card-small mb-3'>
+                  <div class="card-header border-bottom">
+                    <h6 class="m-0">Attach file</h6>
+                  </div>
+                  <div class='card-body p-0'>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item p-3">
+                        <input type="file" id="File" name="file"><br>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> File field can't be empty</small>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
-          <button type="button" class="mb-2 btn btn-primary mr-2">Confirm</button>
+                  <button type="submit" class="mb-2 btn btn-primary mr-2">Confirm</button>
+              </form>
           </div>
             <!-- End Small Stats Blocks -->
 
           <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
-            <ul class="nav">
-              <li class="nav-item">
-                <a class="nav-link" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Services</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Products</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Blog</a>
-              </li>
-            </ul>
+
             <span class="copyright ml-auto my-auto mr-2">Copyright © 2018
               <a href="https://designrevision.com" rel="nofollow">DesignRevision</a>
             </span>
@@ -363,5 +281,6 @@
     <script src="{% static 'web/scripts/shards-dashboards.1.1.0.min.js' %}" ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
     <script src="{% static 'web/scripts/app/app-blog-new-post.1.1.0.js' %}"></script>
+    <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}" ></script>
   </body>
 </html>

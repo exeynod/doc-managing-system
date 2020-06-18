@@ -104,7 +104,7 @@
                     <div class="nav-link-icon__wrapper">
                       <i class="material-icons">&#xE7F4;</i>
                         {% if notifications %}
-                      <span class="badge badge-pill badge-danger">len(notifications)</span>
+                      <span class="badge badge-pill badge-danger">{{  notifications|length }}</span>
                          {% endif %}
                     </div>
                   </a>
@@ -118,7 +118,7 @@
                         </div>
                       </div>
                       <div class="notification__content">
-                        <p>notification</p>
+                        <p>{{ notification }}</p>
                       </div>
                     </a>
                   </div>
