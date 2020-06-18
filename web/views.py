@@ -39,11 +39,12 @@ def log_out(request):
 
 def signup(request):
     if request.method == 'POST':
+        username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
         group = Group.objects.get(name=groupName)
-        user = User.objects.create_user(email, password)
+        user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         user.groups.set([group])
         user.profile.personal_files = '[]'

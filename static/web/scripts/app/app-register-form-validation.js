@@ -7,6 +7,18 @@ var erremailid = document.getElementById('errorEmail');
 var errpassid = document.getElementById('errorPass');
 var selectCompanyId = document.getElementById('selectCompany');
 var selectError = document.getElementById('errorSelect');
+var usernameId = document.getElementById('registerUsername');
+var errorUsername = document.getElementById('errorUsername');
+
+erremailid.style.display = 'none';
+errpassid.style.display = 'none';
+selectError.style.display = 'none';
+errorUsername.style.display = 'none';
+
+if (usernameId.value === '') {
+	errorUsername.style.display = 'block';
+	return false;
+}
 
 if (!correctEmail(emailid)) {
 	erremailid.style.display = "block";
@@ -55,6 +67,7 @@ function switchForms()
 	var registerFormId = document.getElementById('registerForm');
 	var notAmemberHint = document.getElementById('registered');
 	var alreadyRegisteredHint = document.getElementById('loginHint');
+
 	if (loginFormid.style.display !== 'none') {
 		loginFormid.style.display = 'none';
 		notAmemberHint.style.display = 'none';
