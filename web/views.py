@@ -157,9 +157,12 @@ def review(request, filename):
         discussions = DiscussionText.objects.filter(document__filename=filename)
         file = Document.objects.filter(filename=filename)\
             .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+        owner = User.objects.filter(username=username).filter(profile__personal_files=file.id).count() != 0
+        reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
         context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                    'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
-                   'discussions': discussions, 'filename': filename, 'file_date': file.date, 'description': file.description}
+                   'discussions': discussions, 'filename': filename, 'file_date': file.date,
+                   'description': file.description, 'owner': owner, 'reviewer': reviewer}
         return render(request, 'web/document_review.html', context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
@@ -180,7 +183,7 @@ def new_review(request, filename):
 def download(request, filename):
     user = get_user(request)
     file = user_directory_path(user) + filename + '.pdf'
-    with open(filename, 'r') as f:
+    with open(file, 'r') as f:
         response = HttpResponse(f.read())
         file_type = mimetypes.guess_type(file)
         if file_type is None:

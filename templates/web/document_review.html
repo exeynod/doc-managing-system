@@ -195,10 +195,16 @@
                       <li class="list-group-item p-3">
                         <span class="d-flex mb-2">
                           <strong class="mr-1">Name:</strong> {{ filename }}
-                          <a class="ml-auto" href="{% url 'web:new_document_download' filename %}">Download</a>
+{#                          <a class="ml-auto" href="{% url 'web:new_document_download' filename %}">Download</a>#}
+                            <button class="btn btn-sm btn-accent ml-auto" id="publishButton"
+                                    onclick="window.location.href='{% url "web:new_document_download" filename %}';">Download</button>
                         </span>
                         <span class="d-flex mb-2">
                           <strong class="mr-1">Expires_at:</strong>{{ file_date }}
+                        </span>
+                          <span class="d-flex mb-2">
+                          <strong class="mr-1">Status:</strong>
+                          <strong class="text-success">In process</strong>
                         </span>
                         <span class="d-flex mb-2">
                           <i class="material-icons mr-1">calendar_today</i>
@@ -207,6 +213,23 @@
                       </li>
                     </ul>
                   </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+                <!-- Post Overview -->
+                <div class='card card-small mb-3'>
+                  <div class="card-header border-bottom">
+                    <h6 class="m-0">Actions</h6>
+                  </div>
+                    <div class="card-header border-bottom mx-auto">
+                    {% if owner %}
+                        <input type="button" class="mb-2 btn btn-primary mr-1" value="Edit">
+                    {% endif %}
+                    {% if reviewer %}
+                        <input type="button" class="mb-2 btn btn-success mr-2" value="Sign">
+                        <input type="button" class="mb-2 btn btn-danger mr-2" value="Cancel">
+                    {% endif %}
+                    </div>
                 </div>
             </div>
               <div class="col-lg-9 col-md-12 col-sm-12 mb-4">
