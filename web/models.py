@@ -7,19 +7,25 @@ from django.conf import settings
 # Create your models here
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    notifications = models.TextField()
-    personal_files = models.TextField()
-    files_to_contrib = models.TextField()
-
-
 class Document(models.Model):
     filename = models.CharField(max_length=200)
     filepath = models.FilePathField(path=settings.MEDIA_ROOT, null=True)
     date = models.DateField()
-    users = models.TextField()
     description = models.TextField(null=True)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    notifications = models.TextField()
+    personal_files = models.ManyToManyField(Document, related_name='owner')
+    files_to_contrib = models.ManyToManyField(Document, related_name='reviewer')
+
+
+class DiscussionText(models.Model):
+    author = models.CharField(max_length=200)
+    description = models.TextField()
+    publish_date = models.DateField()
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=True)
 
 
 @receiver(post_save, sender=User)

@@ -1,10 +1,14 @@
 # Create your views here.
+import mimetypes
+import os
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group, AnonymousUser
 from django.contrib.auth import get_user
 from django.conf import settings
-from .models import Document
+from django.http import HttpResponse
+from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -23,27 +27,9 @@ def log_in(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-    # Вписываем уведомления пользователя
-    if user is None:
-        return render(request, 'web/errors.html')
-    # Заполним шапку с числоп документов
-    username = user.username
-    notifications = str(user.profile.notifications).split('\n')
-    notifications.remove('')
-    user.profile.notifications = ''
-    user.save()
-    deadlines_count = 0
-    personal_files = str(user.profile.personal_files).split('\n')
-    personal_files.remove('')
-    files_to_contrib = str(user.profile.files_to_contrib).split('\n')
-    files_to_contrib.remove('')
-    for document in files_to_contrib:
-        deadline = date.fromisoformat(str(Document.objects.get(filename=document).date))
-        if deadline - datetime.now().date() <= timedelta(days=1):
-            deadlines_count += 1
-    context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
-               'files_to_sign': len(files_to_contrib), 'personal_files': len(personal_files)}
-    return render(request, 'web/index.html', context=context)
+        else:
+            return render(request, 'web/errors.html')
+    return redirect('web:cabinet')
 
 
 def log_out(request):
@@ -61,8 +47,6 @@ def signup(request):
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         user.groups.set([group])
-        user.profile.personal_files = ''
-        user.profile.files_to_contrib = ''
         user.profile.notifications = ''
         user.save()
     return redirect('web:login')
@@ -82,7 +66,7 @@ def new_post(request):
                 persons.add(user.username)
         context = {'username': username, 'notifications': notifications, 'persons': persons}
         return render(request, 'web/add-new-post.html', context)
-    return render(request, 'web/errors.html')
+    return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def user_directory_path(user):
@@ -97,7 +81,7 @@ def handle_uploaded_file(user, file, filename):
             destination.write(chunk)
 
 
-def add_new_post(request):
+def add_new_document(request):
     user = get_user(request)
     if user is not AnonymousUser and request.method == 'POST':
         recipients = list()
@@ -106,6 +90,10 @@ def add_new_post(request):
         description = request.POST.get('description')
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
+        d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
+        d.save()
+        user.profile.personal_files.add(d)
+        user.save()
         while True:
             recipient = request.POST.get('selectUser-' + str(recipient_counter))
             recipient_counter += 1
@@ -116,27 +104,15 @@ def add_new_post(request):
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
-            rec_files_to_contrib = str(rec.profile.files_to_contrib)
-            rec_files_to_contrib += str(filename) + '\n'
-            rec.profile.files_to_contrib = rec_files_to_contrib
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
             rec_notifications += 'File ' + filename + 'added to your sign list\n'
             rec.profile.notifications = rec_notifications
+            rec.profile.files_to_contrib.add(d)
             rec.save()
-
-        d = Document(filename=filename, filepath=filepath, date=deadline, users=recipients, description=description)
-        d.save()
-
-        # Добавим файл в список файлов пользователя
-        personal_files = user.profile.personal_files
-        personal_files += filename + '\n'
-        user.profile.personal_files = personal_files
-        user.save()
-
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         return redirect('web:login')
-    return render(request, 'web/errors.html')
+    return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def my_404_handler(request, exception):
@@ -154,8 +130,153 @@ def csrf_failure(request, reason=""):
     return render(request, 'web/errors.html', context)
 
 
-def review(request):
-    context = {}
-    return render(request, 'web/document_review.html', context)
+def review(request, filename):
+    user = get_user(request)
+    if user is not AnonymousUser:
+        username = user.username
+        notifications = str(user.profile.notifications).split('\n')
+        notifications.remove('')
+        user.profile.notifications = ''
+        user.save()
+        deadlines_count = 0
+        personal_files = Document.objects.filter(owner__user__username=username)
+        if personal_files:
+            personal_files_len = personal_files.count()
+        else:
+            personal_files_len = 0
+        files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+        if files_to_contrib:
+            files_to_contrib_len = files_to_contrib.count()
+            for document in files_to_contrib:
+                deadline = date.fromisoformat(str(document.date))
+                if deadline - datetime.now().date() <= timedelta(days=1):
+                    deadlines_count += 1
+        else:
+            files_to_contrib_len = 0
+
+        discussions = DiscussionText.objects.filter(document__filename=filename)
+        file = Document.objects.filter(filename=filename)\
+            .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+        context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
+                   'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
+                   'discussions': discussions, 'filename': filename, 'file_date': file.date, 'description': file.description}
+        return render(request, 'web/document_review.html', context)
+    return render(request, 'web/errors.html', context={'errno': '403'})
 
 
+def new_review(request, filename):
+    author = get_user(request)
+    username = author.username
+    description = request.POST.get('description')
+    publish_date = datetime.now().date()
+    document = Document.objects.filter(filename=filename)\
+        .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+    discussion = DiscussionText.objects.create(author=author.username, description=description,
+                                               publish_date=publish_date, document=document)
+    discussion.save()
+    return redirect('web:document_review', filename)
+
+
+def download(request, filename):
+    user = get_user(request)
+    file = user_directory_path(user) + filename + '.pdf'
+    with open(filename, 'r') as f:
+        response = HttpResponse(f.read())
+        file_type = mimetypes.guess_type(file)
+        if file_type is None:
+            file_type = 'application/octet-stream'
+        response['Content-Type'] = file_type
+        response['Content-Length'] = str(os.stat(file).st_size)
+        response['Content-Disposition'] = f"attachment; filename={filename}.pdf"
+    return response
+
+
+def user_page(request):
+    user = get_user(request)
+    if user is not AnonymousUser:
+        username = user.username
+        notifications = str(user.profile.notifications).split('\n')
+        notifications.remove('')
+        context = {'username': username, 'email': user.email, 'notifications': notifications}
+        return render(request, 'web/user-profile-lite.html', context=context)
+    return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def update_account(request):
+    user = get_user(request)
+    if request.method == 'POST' and user is not AnonymousUser:
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user.username = username
+        user.email = email
+        user.set_password(password)
+        user.save()
+        notifications = str(user.profile.notifications).split('\n')
+        notifications.remove('')
+        context = {'username': username, 'email': user.email, 'notifications': notifications}
+        return render(request, 'web/user-profile-lite.html', context=context)
+    return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def show_documents(request):
+    user = get_user(request)
+    if user is AnonymousUser:
+        return render(request, 'web/errors.html')
+    # Заполним шапку с числоп документов
+    username = user.username
+    notifications = str(user.profile.notifications).split('\n')
+    notifications.remove('')
+    user.profile.notifications = ''
+    user.save()
+    deadlines_count = 0
+    personal_files = Document.objects.filter(owner__user__username=username)
+    if personal_files:
+        personal_files_len = personal_files.count()
+    else:
+        personal_files_len = 0
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    if files_to_contrib:
+        files_to_contrib_len = files_to_contrib.count()
+        for document in files_to_contrib:
+            deadline = date.fromisoformat(str(document.date))
+            if deadline - datetime.now().date() <= timedelta(days=1):
+                deadlines_count += 1
+    else:
+        files_to_contrib_len = 0
+    context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
+               'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
+               'my_files': personal_files, 'review_files': files_to_contrib}
+    return render(request, 'web/tables.html', context=context)
+
+
+def search(request, text):
+    user = get_user(request)
+    if user is AnonymousUser:
+        return render(request, 'web/errors.html')
+    # Заполним шапку с числоп документов
+    username = user.username
+    notifications = str(user.profile.notifications).split('\n')
+    notifications.remove('')
+    user.profile.notifications = ''
+    user.save()
+    deadlines_count = 0
+    personal_files = Document.objects.filter(owner__user__username=username)
+    if personal_files:
+        personal_files_len = personal_files.count()
+    else:
+        personal_files_len = 0
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    if files_to_contrib:
+        files_to_contrib_len = files_to_contrib.count()
+        for document in files_to_contrib:
+            deadline = date.fromisoformat(str(document.date))
+            if deadline - datetime.now().date() <= timedelta(days=1):
+                deadlines_count += 1
+    else:
+        files_to_contrib_len = 0
+    files_found = Document.objects.filter(filename=text).\
+        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
+    context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
+               'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len, 'files_found': files_found}
+    return render(request, 'web/search.html', context=context)

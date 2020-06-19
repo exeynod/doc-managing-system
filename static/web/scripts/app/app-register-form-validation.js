@@ -147,3 +147,18 @@ function add_hidden_input() {
 	var descriptionId = document.getElementById('description');
     descriptionId.value = data;
 }
+
+function add_note() {
+	var form = document.getElementById('add-note');
+	var publishButtonId = document.getElementById('publishButton');
+
+	if (form.style.display === 'none') {
+		form.style.display = 'block';
+		publishButtonId.value = 'Cancel';
+	}
+	else {
+		form.style.display = 'none';
+		publishButtonId.value = 'Publish';
+	}
+	return false;
+}
