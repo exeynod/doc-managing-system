@@ -212,7 +212,7 @@
                       <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">{{ i }}</span>
                                     <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectUser-{{ forloop.counter }}" name="selectUser-{{ forloop.counter }}">
-                                      <option selected>Выберите получателей</option>
+                                      <option selected>Choose recipients</option>
                                             {% for person in persons %}
                                                 <option value="{{ person }}">{{ person }}</option>
                                             {% endfor %}
