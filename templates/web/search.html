@@ -199,17 +199,27 @@
                           <th scope="col" class="border-0">Name</th>
                           <th scope="col" class="border-0">Expires at</th>
                           <th scope="col" class="border-0">Description</th>
+                          <th scope="col" class="border-0">Status</th>
                           <th scope="col" class="border-0">Browse</th>
                         </tr>
                       </thead>
                       <tbody>
-
                       {% for document in files_found %}
                         <tr>
                           <td>{{ forloop.counter }}</td>
                           <td>{{ document.filename }}</td>
                           <td>{{ document.date }}</td>
                           <td>{{ document.description }}</td>
+                          <td>{% if document.status == 'In progress' %}
+                          <strong class="text-warning">{{ document.status }}</strong>
+                              {% else %}
+                                  {% if document.status == "Canceled"%}
+                              <strong class="text-danger">{{ document.status }}</strong>
+                              {% else %}
+                              <strong class="text-success">{{ document.status }}</strong>
+                              {% endif %}
+                          {% endif %}
+                          </td>
                           <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Browse"
                           onclick="window.location.href='{% url "web:document_review" document.filename %}'"></td>
                         </tr>
