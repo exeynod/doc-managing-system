@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from digital_signature.documents import Document as Sign_Document
 
 
 def index(request):
@@ -114,6 +115,9 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
+        path = user_directory_path(user) + filename + '.pdf'
+        sd = Sign_Document.Document(user_id=user.id, path=path, primary=True)
+        sd.sign()
         d.signs_number = recipient_counter
         d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
@@ -259,7 +263,7 @@ def show_documents(request):
     return render(request, 'web/tables.html', context=context)
 
 
-def search(request, text):
+def search(request):
     user = get_user(request)
     if user is AnonymousUser:
         return render(request, 'web/errors.html')
@@ -284,8 +288,9 @@ def search(request, text):
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
+    text = request.POST.get('text')
     files_found = Document.objects.filter(filename=text).\
-        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username)).count()
+        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
     context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len, 'files_found': files_found}
     return render(request, 'web/search.html', context=context)
@@ -371,6 +376,9 @@ def sign(request, filename):
             owner.profile.notifications += 'File ' + filename + ' successfully finished\n'
             owner.save()
         file.save()
+        path = user_directory_path(user) + filename + '.pdf'
+        sd = Sign_Document.Document(user_id=user.id, path=path, primary=True)
+        sd.sign()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
 

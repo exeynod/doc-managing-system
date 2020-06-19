@@ -61,7 +61,8 @@
           <div class="main-navbar sticky-top bg-white">
             <!-- Main Navbar -->
             <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
-              <form action="#" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
+              <form class="main-navbar__search w-100 d-none d-md-flex d-lg-flex" method="post" action="{% url 'web:search' %}">
+                  {% csrf_token %}
                 <div class="input-group input-group-seamless ml-3">
                   <div class="input-group-prepend">
                     <div class="input-group-text">
@@ -69,7 +70,7 @@
                     </div>
                   </div>
                 </div>
-                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." aria-label="Search">
+                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." name="text">
               </form>
                 <!-- Уведомления -->
               <ul class="navbar-nav border-left flex-row ">
@@ -141,12 +142,12 @@
             </div>
             <!-- End Page Header -->
             <div class="row">
-              <div class="col-lg col-md-6 col-sm-6 mb-4"">
+              <div class="col-lg col-md-6 col-sm-6 mb-4">
                 <div class="stats-small stats-small--1 card card-small">
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Скоро истекает срок</span>
+                        <span class="stats-small__label text-uppercase">Expires soon</span>
                         <h6 class="stats-small__value count my-3">{{ deadlines }}</h6>
                       </div>
                     </div>
@@ -159,7 +160,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Документов на подпись</span>
+                        <span class="stats-small__label text-uppercase">Documents to sign</span>
                         <h6 class="stats-small__value count my-3">{{ files_to_sign }}</h6>
                       </div>
                     </div>
@@ -172,7 +173,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Мои документы</span>
+                        <span class="stats-small__label text-uppercase">My documents</span>
                         <h6 class="stats-small__value count my-3">{{ personal_files }}</h6>
                       </div>
                     </div>

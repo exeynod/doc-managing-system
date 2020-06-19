@@ -61,7 +61,8 @@
           <div class="main-navbar sticky-top bg-white">
             <!-- Main Navbar -->
             <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
-              <form action="#" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
+              <form class="main-navbar__search w-100 d-none d-md-flex d-lg-flex" method="post" action="{% url 'web:search' %}">
+                  {% csrf_token %}
                 <div class="input-group input-group-seamless ml-3">
                   <div class="input-group-prepend">
                     <div class="input-group-text">
@@ -69,7 +70,7 @@
                     </div>
                   </div>
                 </div>
-                  <div class="navbar-search form-control"> </div>
+                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." name="text">
               </form>
                 <!-- Уведомления -->
               <ul class="navbar-nav border-left flex-row ">

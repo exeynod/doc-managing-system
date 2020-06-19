@@ -61,7 +61,7 @@
           <div class="main-navbar sticky-top bg-white">
             <!-- Main Navbar -->
             <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
-              <form action="#" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex"> <!-- TODO сделать переход на поиск-->
+              <form class="main-navbar__search w-100 d-none d-md-flex d-lg-flex" method="post" action="{% url 'web:search' %}">
                   {% csrf_token %}
                 <div class="input-group input-group-seamless ml-3">
                   <div class="input-group-prepend">
@@ -70,7 +70,7 @@
                     </div>
                   </div>
                 </div>
-                  <input class="navbar-search form-control" name="search" type="text" placeholder="Search for something..." aria-label="Search">
+                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." name="text">
               </form>
                 <!-- Уведомления -->
               <ul class="navbar-nav border-left flex-row ">
@@ -147,7 +147,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Скоро истекает срок</span>
+                        <span class="stats-small__label text-uppercase">Expires soon</span>
                         <h6 class="stats-small__value count my-3">{{ deadlines }}</h6>
                       </div>
                     </div>
@@ -160,7 +160,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Документов на подпись</span>
+                        <span class="stats-small__label text-uppercase">Documents to sign</span>
                         <h6 class="stats-small__value count my-3">{{ files_to_sign }}</h6>
                       </div>
                     </div>
@@ -173,7 +173,7 @@
                   <div class="card-body p-0 d-flex">
                     <div class="d-flex flex-column m-auto">
                       <div class="stats-small__data text-center">
-                        <span class="stats-small__label text-uppercase">Мои документы</span>
+                        <span class="stats-small__label text-uppercase">My documents</span>
                         <h6 class="stats-small__value count my-3">{{ personal_files }}</h6>
                       </div>
                     </div>
@@ -198,6 +198,7 @@
                           <th scope="col" class="border-0">Name</th>
                           <th scope="col" class="border-0">Expires at</th>
                           <th scope="col" class="border-0">Description</th>
+                          <th scope="col" class="border-0">Status</th>
                           <th scope="col" class="border-0">Browse</th>
                         </tr>
                       </thead>
@@ -209,6 +210,16 @@
                           <td>{{ document.filename }}</td>
                           <td>{{ document.date }}</td>
                           <td>{{ document.description }}</td>
+                          <td>{% if document.status == 'In progress' %}
+                          <strong class="text-warning">{{ document.status }}</strong>
+                              {% else %}
+                                  {% if document.status == "Canceled"%}
+                              <strong class="text-danger">{{ document.status }}</strong>
+                              {% else %}
+                              <strong class="text-success">{{ document.status }}</strong>
+                              {% endif %}
+                          {% endif %}
+                          </td>
                           <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Browse"
                           onclick="window.location.href='{% url "web:document_review" document.filename %}'"></td>
                         </tr>
@@ -236,6 +247,7 @@
                           <th scope="col" class="border-0">Name</th>
                           <th scope="col" class="border-0">Expires at</th>
                           <th scope="col" class="border-0">Description</th>
+                          <th scope="col" class="border-0">Status</th>
                           <th scope="col" class="border-0">Browse</th>
                         </tr>
                       </thead>
@@ -247,6 +259,16 @@
                           <td>{{ document.filename }}</td>
                           <td>{{ document.date }}</td>
                           <td>{{ document.description }}</td>
+                            <td>{% if document.status == 'In progress' %}
+                          <strong class="text-warning">{{ document.status }}</strong>
+                              {% else %}
+                                  {% if document.status == "Canceled"%}
+                              <strong class="text-danger">{{ document.status }}</strong>
+                              {% else %}
+                              <strong class="text-success">{{ document.status }}</strong>
+                              {% endif %}
+                          {% endif %}
+                          </td>
                           <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Browse"
                           onclick="window.location.href='{% url "web:document_review" document.filename %}'"></td>
                         </tr>
