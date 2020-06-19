@@ -81,6 +81,11 @@ def handle_uploaded_file(user, file, filename):
             destination.write(chunk)
 
 
+def delete_old_file(user, filename):
+    path = user_directory_path(user) + filename + '.pdf'
+    Path(path).unlink(missing_ok=True)
+
+
 def add_new_document(request):
     user = get_user(request)
     if user is not AnonymousUser and request.method == 'POST':
@@ -91,7 +96,6 @@ def add_new_document(request):
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
         d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
-        d.save()
         user.profile.personal_files.add(d)
         user.save()
         while True:
@@ -110,6 +114,8 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
+        d.signs_number = recipient_counter
+        d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         return redirect('web:login')
     return render(request, 'web/errors.html', context={'errno': '403'})
@@ -162,7 +168,7 @@ def review(request, filename):
         context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                    'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                    'discussions': discussions, 'filename': filename, 'file_date': file.date,
-                   'description': file.description, 'owner': owner, 'reviewer': reviewer}
+                   'description': file.description, 'owner': owner, 'reviewer': reviewer, 'status': str(file.status)}
         return render(request, 'web/document_review.html', context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
@@ -279,7 +285,106 @@ def search(request, text):
     else:
         files_to_contrib_len = 0
     files_found = Document.objects.filter(filename=text).\
-        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
+        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username)).count()
     context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len, 'files_found': files_found}
     return render(request, 'web/search.html', context=context)
+
+
+def edit_document(request, filename):
+    user = get_user(request)
+    if user is not AnonymousUser:
+        # Вписываем уведомления пользователя
+        username = user.username
+        notifications = str(user.profile.notifications).split('\n')
+        notifications.remove('')
+        persons = set()
+        for group in user.groups.all():
+            users = User.objects.filter(groups=Group.objects.get(name=group.name))
+            for user in users:
+                persons.add(user.username)
+
+        file = Document.objects.filter(filename=filename).\
+                        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+        recipients = User.objects.filter(profile__files_to_contrib=file.id)
+        recipient_names = list()
+        for rec in recipients:
+            recipient_names.append(rec.username)
+        context = {'username': username, 'notifications': notifications, 'persons': persons,
+                   'filename': filename, 'recipients': recipient_names,
+                   'deadline': str(file.date)}
+        return render(request, 'web/edit-document.html', context)
+    return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def apply_edits(request, filename):
+    user = get_user(request)
+    if user is not AnonymousUser and request.method == 'POST':
+        recipients = list()
+        recipient_counter = 1
+        new_name = request.POST.get('Filename')
+        description = request.POST.get('description')
+        deadline = request.POST.get('Date')
+        file = Document.objects.filter(filename=filename).\
+                        filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
+
+        if new_name:
+            file.filename = new_name
+        if description:
+            file.description = description
+        if deadline:
+            file.date = deadline
+        new_file = request.FILES.get('file')
+        if new_file:
+            delete_old_file(user, filename)
+            handle_uploaded_file(user, new_file, new_name)
+        file.save()
+        while True:
+            recipient = request.POST.get('selectUser-' + str(recipient_counter))
+            recipient_counter += 1
+            if recipient is None:
+                break
+            if str(recipient) == 'Choose recipients':
+                continue
+            recipients.append(str(recipient) + '\n')
+            # Добавить получателям файл в список файлов на подписание
+            rec = User.objects.get(username=recipient)
+            # Вписываем уведомления пользователя
+            rec_notifications = str(rec.profile.notifications)
+            rec_notifications += 'File ' + filename + 'has been edited\n'
+            rec.profile.notifications = rec_notifications
+            rec.save()
+        return redirect('web:document_review', filename)
+    return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def sign(request, filename):
+    user = get_user(request)
+    if User is not AnonymousUser:
+        file = Document.objects.filter(filename=filename). \
+            filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
+        file.signed += 1
+        print(file.signed)
+        if file.signed >= file.signs_number:
+            file.status = 'Success'
+            owner = User.objects.filter(profile__personal_files__filename=filename)[0]
+            owner.profile.notifications += 'File ' + filename + ' successfully finished\n'
+            owner.save()
+        file.save()
+        return redirect('web:document_review', filename)
+    return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def cancel(request, filename):
+    user = get_user(request)
+    if User is not AnonymousUser:
+        file = Document.objects.filter(filename=filename). \
+            filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
+        file.status = 'Canceled'
+        file.signed = 0
+        file.save()
+        owner = User.objects.filter(profile__personal_files__filename=filename)[0]
+        owner.profile.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
+        owner.save()
+        return redirect('web:document_review', filename)
+    return render(request, 'web/errors.html', context={'errno': '403'})

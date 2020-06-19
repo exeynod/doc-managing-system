@@ -12,6 +12,9 @@ class Document(models.Model):
     filepath = models.FilePathField(path=settings.MEDIA_ROOT, null=True)
     date = models.DateField()
     description = models.TextField(null=True)
+    signs_number = models.PositiveIntegerField(default=0)
+    signed = models.PositiveIntegerField(default=0)
+    status = models.CharField(max_length=25, default='In progress')
 
 
 class Profile(models.Model):
