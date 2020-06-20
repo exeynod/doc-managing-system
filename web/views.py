@@ -166,9 +166,9 @@ def review(request, filename):
         discussions = DiscussionText.objects.filter(document__filename=filename)
         file = Document.objects.filter(filename=filename)\
             .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
-        owner = User.objects.filter(username=username).filter(profile__personal_files=file.id).count() != 0
+        owner = file.owner.all()[0]
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
-        path = user_directory_path(user) + filename + '.pdf'
+        path = user_directory_path(owner) + filename + '.pdf'
         sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         signed = sd.is_signed_by()
         context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
@@ -372,15 +372,16 @@ def sign(request, filename):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
+        owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
             file.status = 'Success'
-            owner = User.objects.filter(profile__personal_files__filename=filename)[0]
-            owner.profile.notifications += 'File ' + filename + ' successfully finished\n'
+            owner.notifications += 'File ' + filename + ' successfully finished\n'
             owner.save()
         file.save()
-        path = user_directory_path(user) + filename + '.pdf'
-        owner = User.objects.filter(username=username).filter(profile__personal_files=file.id).count() != 0
-        if not owner:
+        path = user_directory_path(owner) + filename + '.pdf'
+        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+        signed = sd.is_signed_by()
+        if not signed:
             sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
             sd.sign()
         return redirect('web:document_review', filename)
@@ -395,7 +396,7 @@ def cancel(request, filename):
         file.status = 'Canceled'
         file.signed = 0
         file.save()
-        owner = User.objects.filter(profile__personal_files__filename=filename)[0]
+        owner = file.owner.all()[0]
         owner.profile.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
         owner.save()
         return redirect('web:document_review', filename)
