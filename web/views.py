@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from digital_signature.documents import Document as Sign_Document
+from documents import document as Sign_Document
 
 
 def index(request):
