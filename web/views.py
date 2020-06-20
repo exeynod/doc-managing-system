@@ -102,7 +102,7 @@ def add_new_document(request):
         user.profile.personal_files.add(d)
         user.save()
         path = user_directory_path(user) + filename + '.pdf'
-        Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+        Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
         while True:
             recipient = request.POST.get('selectUser-' + str(recipient_counter))
             recipient_counter += 1
@@ -379,8 +379,10 @@ def sign(request, filename):
             owner.save()
         file.save()
         path = user_directory_path(user) + filename + '.pdf'
-        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
-        sd.sign()
+        owner = User.objects.filter(username=username).filter(profile__personal_files=file.id).count() != 0
+        if not owner:
+            sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+            sd.sign()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
