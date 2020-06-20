@@ -25,7 +25,7 @@
               <a class="navbar-brand w-100 mr-0" href="{% url 'web:login' %}" style="line-height: 25px;">
                 <div class="d-table m-auto">
                   <img id="main-logo" class="d-inline-block align-top mr-1" style="max-width: 25px;" src="{% static 'web/images/shards-dashboards-logo.svg' %}" alt="Документус">
-                  <span class="d-none d-md-inline ml-1">Shards Dashboard</span>
+                  <span class="d-none d-md-inline ml-1">Электронный документооборот</span>
                 </div>
               </a>
               <a class="toggle-sidebar d-sm-inline d-md-none d-lg-none">
@@ -107,7 +107,7 @@
                         </div>
                       </div>
                       <div class="notification__content">
-                        <p>There's no new notifications</p>
+                        <p>Нет оповещений</p>
                       </div>
                     </a>
                   </div>
@@ -119,7 +119,7 @@
                   </a>
                   <div class="dropdown-menu dropdown-menu-small">
                     <a class="dropdown-item text-danger" href="{% url 'web:logout' %}">
-                      <i class="material-icons text-danger">&#xE879;</i> Logout </a>
+                      <i class="material-icons text-danger">&#xE879;</i> Выход </a>
                   </div>
                 </li>
               </ul>
@@ -147,7 +147,7 @@
                   <div class="card-body">
                       <input class="form-control form-control-lg mb-1" type="text"
                              placeholder="Filename" id="Filename" name="Filename" value="{{ filename }}">
-                        <small class="errorReq mb-3"  style="display: none; color: red;" id="emptyFilename"><i></i> This field can't be empty</small>
+                        <small class="errorReq mb-3"  style="display: none; color: red;" id="emptyFilename"><i></i> Это поле не может быть пустым</small>
                       <div id="editor-container" class="add-new-post__editor mb-1"></div>
                       <input name="description" value="" style="display: none;" id="description">
                   </div>
@@ -160,7 +160,7 @@
                 <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
                     <h6 class="m-0">Recipients</h6>
-                  <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Choose at least one recipient</small>
+                  <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Выберите хотя бы одного пользователя</small>
                   </div>
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
@@ -205,7 +205,7 @@
                         <!-- Конеч цепочки подписей -->
                       </li>
                       {% endfor %}
-                      <button class="btn btn-sm btn-accent ml-auto"> Add more users</button>
+                      <button class="btn btn-sm btn-accent ml-auto"> Добавить пользователя</button>
                     {% endif %}
                     </ul>
                   </div>
@@ -220,7 +220,7 @@
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item p-3">
                         <input type="date" id="Deadline" value="{{ deadline }}" name="Date"><br>
-                          <small class="errorReq"  style="display: none; color: red;" id="emptyDeadline"><i></i> Date field can't be empty</small>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyDeadline"><i></i> Дата не может быть пустой</small>
                       </li>
                     </ul>
                   </div>
@@ -233,14 +233,14 @@
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item p-3">
                         <input type="file" id="File" name="file"><br>
-                          <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> File field can't be empty</small>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> Загрузите файл</small>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
-                  <button type="submit" class="mb-2 btn btn-primary mr-2">Confirm</button>
+                  <button type="submit" class="mb-2 btn btn-primary mr-2">Подтвердить</button>
               </form>
           </div>
             <!-- End Small Stats Blocks -->
@@ -248,11 +248,11 @@
           <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
             <ul class="nav">
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'web:login' %}">Home</a>
+                <a class="nav-link" href="{% url 'web:login' %}">Домой</a>
               </li>
             </ul>
-            <span class="copyright ml-auto my-auto mr-2">Copyright © 2018
-              <a href="https://designrevision.com" rel="nofollow">DesignRevision</a>
+            <span class="copyright ml-auto my-auto mr-2">Copyright © 2020
+              <a href="https://designrevision.com" rel="nofollow"></a>
             </span>
           </footer>
         </main>

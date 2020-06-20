@@ -24,7 +24,7 @@
       modules: {
         toolbar: toolbarOptions
       },
-      placeholder: 'File description (optional)',
+      placeholder: 'Описание файла...',
       theme: 'snow'
     });
 
