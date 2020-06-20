@@ -92,11 +92,13 @@ def add_new_document(request):
     if user is not AnonymousUser and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
-        filename = request.POST.get('Filename')
+        filename = str(request.POST.get('Filename')).replace(' ', '')
         description = request.POST.get('description')
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
         d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
+        d.signs_number = recipient_counter
+        d.save()
         user.profile.personal_files.add(d)
         user.save()
         while True:
@@ -115,11 +117,6 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
-        path = user_directory_path(user) + filename + '.pdf'
-        sd = Sign_Document.Document(user_id=user.id, path=path, primary=True)
-        sd.sign()
-        d.signs_number = recipient_counter
-        d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         return redirect('web:login')
     return render(request, 'web/errors.html', context={'errno': '403'})
@@ -159,7 +156,7 @@ def review(request, filename):
             files_to_contrib_len = files_to_contrib.count()
             for document in files_to_contrib:
                 deadline = date.fromisoformat(str(document.date))
-                if deadline - datetime.now().date() <= timedelta(days=1):
+                if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
                     deadlines_count += 1
         else:
             files_to_contrib_len = 0
@@ -193,7 +190,7 @@ def new_review(request, filename):
 def download(request, filename):
     user = get_user(request)
     file = user_directory_path(user) + filename + '.pdf'
-    with open(file, 'r') as f:
+    with open(file, 'rb') as f:
         response = HttpResponse(f.read())
         file_type = mimetypes.guess_type(file)
         if file_type is None:
@@ -253,7 +250,7 @@ def show_documents(request):
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1):
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
@@ -284,7 +281,7 @@ def search(request):
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1):
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
