@@ -102,7 +102,6 @@ def add_new_document(request):
         user.profile.personal_files.add(d)
         user.save()
         path = user_directory_path(user) + filename + '.pdf'
-        Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
         while True:
             recipient = request.POST.get('selectUser-' + str(recipient_counter))
             recipient_counter += 1
@@ -120,6 +119,7 @@ def add_new_document(request):
             rec.profile.files_to_contrib.add(d)
             rec.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
+        Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
         return redirect('web:login')
     return render(request, 'web/errors.html', context={'errno': '403'})
 
