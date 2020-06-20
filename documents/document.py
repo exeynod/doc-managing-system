@@ -37,6 +37,7 @@ class Document:
         if self.primary:
             trailer.Info.Owner = self.user_id
             trailer.Info.ControlSum = control_sum
+            trailer.Info.SignedBy = ''
         else:
             if self.validate():
                 signed_by = ' '.join(self.who_signed() + [self.user_id])
