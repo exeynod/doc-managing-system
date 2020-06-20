@@ -27,6 +27,9 @@ class Document:
     def get_control_sum(text):
         return str(hex(zlib.crc32(str.encode(text)) & 0xffffffff))
 
+    def is_signed_by(self):
+        return True if self.user_id in self.who_signed() else False
+
     def sign(self):
         text = self.get_text()
         control_sum = self.get_control_sum(text)
