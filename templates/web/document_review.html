@@ -215,6 +215,14 @@
                               {% endif %}
                           {% endif %}
                         </span>
+                      {% if owner %}
+                          {% for sign in signs %}
+                              <span class="d-flex mb-2">
+                                <strong class="mr-1">{{ sign }}</strong>
+                            <strong class="text-success">Signed</strong>
+                        </span>
+                          {% endfor %}
+                      {% endif %}
                         <span class="d-flex mb-2">
                           <i class="material-icons mr-1">calendar_today</i>
                           <strong class="mr-1">Description:</strong> {{ description }}

@@ -171,11 +171,18 @@ def review(request, filename):
         path = user_directory_path(owner) + filename + '.pdf'
         sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         signed = sd.is_signed_by()
+        if owner.id == user.id:
+            signs_id = sd.who_signed()
+            signs = list()
+            for id in signs_id:
+                signs.append(User.objects.get(id=id).username)
+        else:
+            signs = None
         context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                    'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                    'discussions': discussions, 'filename': filename, 'file_date': file.date,
-                   'description': file.description, 'owner': owner, 'reviewer': reviewer,
-                   'status': str(file.status), 'signed': signed}
+                   'description': file.description, 'owner': owner.id == user.id, 'reviewer': reviewer,
+                   'status': str(file.status), 'signed': signed, 'signs': signs}
         return render(request, 'web/document_review.html', context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
