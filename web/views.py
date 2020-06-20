@@ -101,6 +101,8 @@ def add_new_document(request):
         d.save()
         user.profile.personal_files.add(d)
         user.save()
+        path = user_directory_path(user) + filename + '.pdf'
+        Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         while True:
             recipient = request.POST.get('selectUser-' + str(recipient_counter))
             recipient_counter += 1
@@ -166,10 +168,14 @@ def review(request, filename):
             .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
         owner = User.objects.filter(username=username).filter(profile__personal_files=file.id).count() != 0
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
+        path = user_directory_path(user) + filename + '.pdf'
+        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+        signed = sd.is_signed_by()
         context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                    'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                    'discussions': discussions, 'filename': filename, 'file_date': file.date,
-                   'description': file.description, 'owner': owner, 'reviewer': reviewer, 'status': str(file.status)}
+                   'description': file.description, 'owner': owner, 'reviewer': reviewer,
+                   'status': str(file.status), 'signed': signed}
         return render(request, 'web/document_review.html', context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
@@ -366,7 +372,6 @@ def sign(request, filename):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
-        print(file.signed)
         if file.signed >= file.signs_number:
             file.status = 'Success'
             owner = User.objects.filter(profile__personal_files__filename=filename)[0]
@@ -374,7 +379,7 @@ def sign(request, filename):
             owner.save()
         file.save()
         path = user_directory_path(user) + filename + '.pdf'
-        sd = Sign_Document.Document(user_id=user.id, path=path, primary=True)
+        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         sd.sign()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})

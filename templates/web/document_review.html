@@ -235,7 +235,7 @@
                         <input type="button" class="mb-2 btn btn-primary mr-1" value="Edit"
                             onclick="window.location.href='{% url "web:document_edit" filename %}';">
                     {% endif %}
-                    {% if reviewer %}
+                    {% if reviewer and not signed %}
                         <input type="button" class="mb-2 btn btn-success mr-2" value="Sign"
                         onclick="window.location.href='{% url "web:document_sign" filename %}';">
                         <input type="button" class="mb-2 btn btn-danger mr-2" value="Cancel"
