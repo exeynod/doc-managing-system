@@ -9,7 +9,8 @@ class Document:
         self.user_id = user_id
         self.path = path
         self.primary = primary
-        self.sign()
+        if primary:
+            self.sign()
 
     def get_text(self):
         pdf_file = open(self.path, 'rb')
