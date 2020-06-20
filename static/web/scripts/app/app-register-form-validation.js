@@ -108,6 +108,7 @@ function postValidation() {
 	var date = new Date(document.getElementById('Deadline').value);
 	var fileId = document.getElementById('File')
 
+
 	var errorFilename = document.getElementById('emptyFilename');
 	var errorSelect = document.getElementById('emptySelect');
 	var errorDeadline = document.getElementById('emptyDeadline');
@@ -117,6 +118,10 @@ function postValidation() {
 	errorSelect.style.display = 'none';
 	errorDeadline.style.display = 'none';
 	emptyFileId.style.display = 'none';
+
+	var parts = fileId.files[0].name.split('.');
+	var ext = 'undefined';
+	if (parts.length > 1) ext = parts.pop();
 
 	if (filenameId.value === '') {
 		errorFilename.style.display = 'block';
@@ -130,7 +135,7 @@ function postValidation() {
 		errorDeadline.style.display = 'block';
 		return false;
 	}
-	if (fileId.files.length === 0) {
+	if ((fileId.files.length === 0) || (ext !== 'pdf')) {
 		emptyFileId.style.display = 'block';
 		return false;
 	}
