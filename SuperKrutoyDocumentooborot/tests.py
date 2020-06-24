@@ -2,8 +2,8 @@ from django.test import TestCase
 from documents.document import Document
 
 
-test_file_1 = 'SuperKrutoyDocumentooborot/test_1.pdf'
-test_file_2 = 'SuperKrutoyDocumentooborot/test_2.pdf'
+test_file_1 = 'SuperKrutoyDocumentooborot/1_test.pdf'
+test_file_2 = 'SuperKrutoyDocumentooborot/test.pdf'
 users = [str(i) for i in range(5)]
 
 
@@ -13,12 +13,8 @@ class DefaultTestCase(TestCase):
         self.assertTrue(True)
 
     def test_document_init(self):
-        try:
-            d = Document(users[0], test_file_1, True)
-        except TypeError:
-            pass
-        else:
-            self.assertTrue(d.validate())
+        d = Document(users[0], test_file_1, True)
+        self.assertTrue(d.validate())
 
     def test_sign(self):
         try:
