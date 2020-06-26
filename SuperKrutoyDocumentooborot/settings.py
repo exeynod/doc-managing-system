@@ -125,3 +125,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
+import django_heroku
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+
+
