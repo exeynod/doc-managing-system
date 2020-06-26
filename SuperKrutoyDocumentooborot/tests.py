@@ -2,8 +2,8 @@ from django.test import TestCase
 from documents.document import Document
 
 
-test_file_1 = 'SuperKrutoyDocumentooborot/1_test.pdf'
-test_file_2 = 'SuperKrutoyDocumentooborot/test.pdf'
+test_file_1 = 'SuperKrutoyDocumentooborot/test_docs/1_test.pdf'
+test_file_2 = 'SuperKrutoyDocumentooborot/test_docs/test.pdf'
 users = [str(i) for i in range(5)]
 
 

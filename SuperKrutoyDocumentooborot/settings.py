@@ -25,7 +25,7 @@ SECRET_KEY = '8^jjv%_vt1^boq&h6f4y%e5-7$8$_mmgb+%a4ic-h8-cr$$cz='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -124,3 +124,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
