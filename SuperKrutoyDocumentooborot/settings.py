@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'SuperKrutoyDocumentooborot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'documentooborot',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -126,10 +130,10 @@ MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
 import os
-
-if '/app' in os.environ['HOME']:
-    import django_heroku
-    # Activate Django-Heroku.
-    django_heroku.settings(locals())
-
-
+#
+# if '/app' in os.environ['HOME']:
+#     import django_heroku
+#     # Activate Django-Heroku.
+#     django_heroku.settings(locals())
+#
+#

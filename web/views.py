@@ -14,14 +14,13 @@ from pathlib import Path
 from documents import document as Sign_Document
 
 
-def index(request):
+def index(request, alert=None):
     groups = Group.objects.all()
-    context = {'companies': groups}
+    context = {'companies': groups, 'alert': alert}
     return render(request, 'web/main.html', context=context)
 
 
 def log_in(request):
-    user = get_user(request)
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
@@ -44,6 +43,12 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
+        userExists = User.objects.get(username=username)
+        emailExists = User.objects.get(email=email)
+        if userExists:
+            return index(request, alert='Пользователь с таким именем уже существует')
+        if emailExists:
+            return index(request, alert='Пользователь с таким email уже существует')
         group = Group.objects.get(name=groupName)
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
@@ -107,14 +112,14 @@ def add_new_document(request):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Choose recipients':
+            if str(recipient) == 'Выбирите пользователя':
                 continue
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'File ' + filename + 'added to your sign list\n'
+            rec_notifications += 'Файл ' + filename + ' был добавлен в список документов на подпись\n'
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
@@ -361,14 +366,14 @@ def apply_edits(request, filename):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Choose recipients':
+            if str(recipient) == 'Выберите пользователя':
                 continue
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'File ' + filename + 'has been edited\n'
+            rec_notifications += 'Файл ' + filename + ' был изменен\n'
             rec.profile.notifications = rec_notifications
             rec.save()
         return redirect('web:document_review', filename)
@@ -384,7 +389,7 @@ def sign(request, filename):
         owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
             file.status = 'Success'
-            owner.notifications += 'File ' + filename + ' successfully finished\n'
+            owner.notifications += 'Файл ' + filename + ' подписан\n'
             owner.save()
         file.save()
         path = user_directory_path(owner) + filename + '.pdf'
