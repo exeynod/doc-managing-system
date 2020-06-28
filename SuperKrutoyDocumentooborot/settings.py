@@ -130,10 +130,10 @@ MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
 import os
-#
-# if '/app' in os.environ['HOME']:
-#     import django_heroku
-#     # Activate Django-Heroku.
-#     django_heroku.settings(locals())
-#
-#
+
+if '/app' in os.environ['HOME']:
+    import django_heroku
+    # Activate Django-Heroku.
+    django_heroku.settings(locals())
+
+
