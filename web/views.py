@@ -169,6 +169,8 @@ def review(request, filename):
         owner = file.owner.all()[0]
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
         path = user_directory_path(owner) + filename + '.pdf'
+        if '/app' in path:
+            path = path.replace('/app', '.')
         sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         signed = sd.is_signed_by()
         if owner.id == user.id:
