@@ -16,6 +16,12 @@
   </head>
   <body class="h-100">
   	<div class="container">
+    {% if alert %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa fa-info mx-2 my-2"></i>
+             {{ alert }} </div>
+    {% endif %}
+    <div class="main-content-container container-fluid px-4">
   	<div class="row" style="display: flex; flex-direction: column; justify-content: center;">
               <div class="col-lg-8 mx-auto" id="loginForm">
                 <div class="card card-small mb-4">

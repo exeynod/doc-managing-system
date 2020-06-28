@@ -14,9 +14,9 @@ from pathlib import Path
 from documents import document as Sign_Document
 
 
-def index(request):
+def index(request, alert=None):
     groups = Group.objects.all()
-    context = {'companies': groups}
+    context = {'companies': groups, 'alert': alert}
     return render(request, 'web/main.html', context=context)
 
 
@@ -43,6 +43,12 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
+        userExists = User.objects.get(username=username)
+        emailExists = User.objects.get(email=email)
+        if userExists:
+            return index(request, alert='Пользователь с таким именем уже существует')
+        if emailExists:
+            return index(request, alert='Пользователь с таким email уже существует')
         group = Group.objects.get(name=groupName)
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
@@ -113,7 +119,7 @@ def add_new_document(request):
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'Файл ' + filename + 'был добавлен в список документов на подпись\n'
+            rec_notifications += 'Файл ' + filename + ' был добавлен в список документов на подпись\n'
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
@@ -365,7 +371,7 @@ def apply_edits(request, filename):
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'Файл ' + filename + 'был изменен\n'
+            rec_notifications += 'Файл ' + filename + ' был изменен\n'
             rec.profile.notifications = rec_notifications
             rec.save()
         return redirect('web:document_review', filename)

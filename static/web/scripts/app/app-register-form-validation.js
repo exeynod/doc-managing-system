@@ -126,7 +126,7 @@ function postValidation() {
 		errorSelect.style.display = 'block';
 		return false;
 	}
-	if (moment(date.value, 'YYYY/MM/DD',true).isValid) {
+	if (!moment(date.value, 'YYYY-MM-DD',true).isValid()) {
 		errorDeadline.style.display = 'block';
 		return false;
 	}
