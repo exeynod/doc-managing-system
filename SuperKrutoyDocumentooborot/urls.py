@@ -19,7 +19,7 @@ from web.views import my_404_handler, my_500_handler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('web/', include('web.urls')),
+    path('', include('web.urls')),
 ]
 
 handler404 = my_404_handler
