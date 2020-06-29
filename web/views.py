@@ -104,8 +104,6 @@ def add_new_document(request):
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
         d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
-        d.signs_number = recipient_counter
-        d.save()
         user.profile.personal_files.add(d)
         user.save()
         path = user_directory_path(user) + filename + '.pdf'
@@ -125,6 +123,8 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
+        d.signs_number = recipient_counter
+        d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
         return redirect('web:login')
@@ -351,7 +351,6 @@ def apply_edits(request, filename):
         deadline = request.POST.get('Date')
         file = Document.objects.filter(filename=filename).\
                         filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
-
         if new_name:
             file.filename = new_name
         if description:
@@ -378,6 +377,13 @@ def apply_edits(request, filename):
             rec_notifications += 'Файл ' + filename + ' был изменен\n'
             rec.profile.notifications = rec_notifications
             rec.save()
+        if recipient_counter != file.signs_number:
+            owner = file.owner.all()[0]
+            path = user_directory_path(owner) + filename + '.pdf'
+            sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+            file.signed = len(sd.who_signed())
+            file.signs_number = recipient_counter
+            file.status = 'In progress'
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
