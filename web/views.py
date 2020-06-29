@@ -43,8 +43,8 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
-        userExists = User.objects.get(username=username)
-        emailExists = User.objects.get(email=email)
+        userExists = User.objects.filter(username=username).count() != 0
+        emailExists = User.objects.filter(email=email).count() != 0
         if userExists:
             return index(request, alert='Пользователь с таким именем уже существует')
         if emailExists:
