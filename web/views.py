@@ -99,6 +99,8 @@ def add_new_document(request):
         recipient_counter = 1
         filename = str(request.POST.get('Filename')).replace(' ', '')
         description = request.POST.get('description')
+        if str(description) == '<br>':
+            description = 'Описание отсутствует'
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
         d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
