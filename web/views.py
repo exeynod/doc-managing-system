@@ -60,7 +60,7 @@ def signup(request):
 
 def new_post(request):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         # Вписываем уведомления пользователя
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
@@ -94,7 +94,7 @@ def delete_old_file(user, filename):
 
 def add_new_document(request):
     user = get_user(request)
-    if user is not AnonymousUser and request.method == 'POST':
+    if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
         filename = str(request.POST.get('Filename')).replace(' ', '')
@@ -148,7 +148,7 @@ def csrf_failure(request, reason=""):
 
 def review(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
@@ -225,7 +225,7 @@ def download(request, filename):
 
 def user_page(request):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
@@ -236,7 +236,7 @@ def user_page(request):
 
 def update_account(request):
     user = get_user(request)
-    if request.method == 'POST' and user is not AnonymousUser:
+    if request.method == 'POST' and not isinstance(user, AnonymousUser):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
@@ -253,7 +253,7 @@ def update_account(request):
 
 def show_documents(request):
     user = get_user(request)
-    if user is AnonymousUser:
+    if isinstance(user, AnonymousUser):
         return render(request, 'web/errors.html')
     # Заполним шапку с числоп документов
     username = user.username
@@ -284,7 +284,7 @@ def show_documents(request):
 
 def search(request):
     user = get_user(request)
-    if user is AnonymousUser:
+    if isinstance(user, AnonymousUser):
         return render(request, 'web/errors.html')
     # Заполним шапку с числоп документов
     username = user.username
@@ -317,7 +317,7 @@ def search(request):
 
 def edit_document(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         # Вписываем уведомления пользователя
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
@@ -343,7 +343,7 @@ def edit_document(request, filename):
 
 def apply_edits(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser and request.method == 'POST':
+    if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
         new_name = request.POST.get('Filename')
@@ -390,7 +390,7 @@ def apply_edits(request, filename):
 
 def sign(request, filename):
     user = get_user(request)
-    if User is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
@@ -412,7 +412,7 @@ def sign(request, filename):
 
 def cancel(request, filename):
     user = get_user(request)
-    if User is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.status = 'Canceled'
