@@ -43,8 +43,8 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
-        userExists = User.objects.get(username=username)
-        emailExists = User.objects.get(email=email)
+        userExists = User.objects.filter(username=username).count() != 0
+        emailExists = User.objects.filter(email=email).count() != 0
         if userExists:
             return index(request, alert='Пользователь с таким именем уже существует')
         if emailExists:
@@ -112,7 +112,7 @@ def add_new_document(request):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Выбирите пользователя':
+            if str(recipient) == 'Выберите пользователя':
                 continue
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
@@ -174,6 +174,8 @@ def review(request, filename):
         owner = file.owner.all()[0]
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
         path = user_directory_path(owner) + filename + '.pdf'
+        if '/app' in path:
+            path = path.replace('/app', '.')
         sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         signed = sd.is_signed_by()
         if owner.id == user.id:

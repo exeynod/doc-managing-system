@@ -13,7 +13,7 @@ jobs:
       - python/save-cache
       - run:
           command:
-            python manage.py test
+            python manage.py test --settings=SuperKrutoyDocumentooborot.CI_settings
           name: Test
 
 workflows:
