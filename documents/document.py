@@ -36,9 +36,19 @@ class Document:
         control_sum = self.get_control_sum(text)
         trailer = pdfrw.PdfReader(self.path)
         if self.primary:
-            trailer.Info.Owner = self.user_id
-            trailer.Info.ControlSum = control_sum
-            trailer.Info.SignedBy = ''
+            try:
+                trailer.Info.Owner = self.user_id
+                trailer.Info.ControlSum = control_sum
+                trailer.Info.SignedBy = ''
+            except AttributeError:
+                writer = pdfrw.PdfWriter()
+                writer.trailer.Info = pdfrw.IndirectPdfDict(
+                    Owner=self.user_id,
+                    ControlSum=control_sum,
+                    SignedBy=''
+                )
+                writer.write(self.path)
+                trailer = pdfrw.PdfReader(self.path)
             self.primary = False
         else:
             if self.validate():
@@ -57,3 +67,4 @@ class Document:
         trailer = pdfrw.PdfReader(self.path)
         signed_by = trailer.Info.SignedBy
         return signed_by[1:len(signed_by) - 1].split()
+
