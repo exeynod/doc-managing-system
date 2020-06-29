@@ -132,10 +132,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
 
 import os
 
