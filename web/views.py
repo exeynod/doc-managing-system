@@ -112,7 +112,7 @@ def add_new_document(request):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Выбирите пользователя':
+            if str(recipient) == 'Выберите пользователя':
                 continue
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
