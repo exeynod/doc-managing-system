@@ -39,10 +39,10 @@
                                 <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">@</span>
                                 </div>
-                                <input type="text" name="username" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1"> </div>
+                                <input type="text" name="username" class="form-control" placeholder="Никнейм" aria-label="Username" aria-describedby="basic-addon1"> </div>
                             </div>
                             <div class="form-group">
-                              <input type="password" name="password" class="form-control" id="inputPassword4" placeholder="Password" value=""> </div>
+                              <input type="password" name="password" class="form-control" id="inputPassword4" placeholder="Пароль" value=""> </div>
                                <div class="form-group">
                           		<button type="submit" class="mb-2 btn btn-outline-primary mr-2" id="loginButton">Вход</button>
                           		</div>
@@ -71,7 +71,7 @@
                               {% csrf_token %}
                           <div class="form-group">
                               <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" id="registerUsername"> </div>
+                                <input type="text" class="form-control" name="username" placeholder="Никнейм" aria-label="Username" aria-describedby="basic-addon1" id="registerUsername"> </div>
                             </div>
                                 <small class="errorReq"  style="display: none; color: red;" id="errorUsername"><i></i> Empty username </small>
                             <div class="form-group">
@@ -81,12 +81,12 @@
                                 </div>
                                 <input type="text" class="form-control" name="email" placeholder="E-mail" aria-label="Username" aria-describedby="basic-addon1" id="registerEmail"> </div>
                             </div>
-                                <small class="errorReq"  style="display: none; color: red;" id="errorEmail"><i></i> Wrong email </small>
+                                <small class="errorReq"  style="display: none; color: red;" id="errorEmail"><i></i> Неверный e-mail </small>
                             <div class="form-group">
-                              <input type="password" class="form-control" name="password" id="registerInputPassword" placeholder="Password" value=""> </div>
-                              <small class="errorReq"  style="display: none; color: red;" id="errorPass"><i></i> Password does not match</small>
+                              <input type="password" class="form-control" name="password" id="registerInputPassword" placeholder="Пароль" value=""> </div>
+                              <small class="errorReq"  style="display: none; color: red;" id="errorPass"><i></i> Пароли не совпадают</small>
                               <div class="form-group">
-                              <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat password" value=""> </div>
+                              <input type="password" class="form-control" id="repeatPassword" placeholder="Повторите пароль" value=""> </div>
 
                               <div class="form-group" id="Select company dropdown">
                                     <select class="custom-select custom-select-sm" style="max-width: 130px;" id="selectCompany" name="select-company">
