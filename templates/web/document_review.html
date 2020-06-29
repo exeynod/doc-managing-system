@@ -260,13 +260,13 @@
                   </div>
 
                   <div class="card-body p-0">
-                    <div class="blog-comments__item d-flex p-3">
+                    <div class="blog-comments__item d-flex flex-column p-3">
                     <!-- discussion block -->
                     {% if not discussions %}
                         <div class="blog-comments__content">
                         <p class="m-0 my-1 mb-2 text-muted">Обсуждений пока нет</p>
                       </div>
-                    {% endif %}
+                    {% else %}
                         {% for discussion in discussions %}
                       <div class="blog-comments__content">
                         <div class="blog-comments__meta text-muted">
@@ -276,6 +276,7 @@
                         <p class="m-0 my-1 mb-2 text-muted">{{ discussion.description }}</p>
                       </div>
                         {% endfor %}
+                    {% endif %}
                     </div>
                   </div>
                 </div>
