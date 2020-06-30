@@ -44,6 +44,8 @@ class Document:
                 trailer.Info.SignedBy = ''
             except AttributeError:
                 writer = pdfrw.PdfWriter()
+                for page in pdfrw.PdfReader(self.path).pages:
+                    writer.addPage(page)
                 writer.trailer.Info = pdfrw.IndirectPdfDict(
                     Owner=self.user_id,
                     ControlSum=control_sum,
@@ -72,3 +74,7 @@ class Document:
         signed_by = trailer.Info.SignedBy
         return signed_by[1:len(signed_by) - 1].split()
 
+if __name__ == '__main__':
+    d = Document('0', './Rezyume.pdf', True)
+    d = Document('0', './Rezyume.pdf')
+    d.sign()
