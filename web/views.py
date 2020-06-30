@@ -124,6 +124,7 @@ def add_new_document(request):
             rec.profile.files_to_contrib.add(d)
             rec.save()
         d.signs_number = recipient_counter
+        d.signed = 0
         d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
@@ -419,7 +420,7 @@ def cancel(request, filename):
         file.signed = 0
         file.save()
         owner = file.owner.all()[0]
-        owner.profile.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
+        owner.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
         owner.save()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
