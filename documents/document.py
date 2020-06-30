@@ -11,6 +11,11 @@ class Document:
         self.primary = primary
         if primary:
             self.sign()
+        else:
+            if self.validate():
+                pass
+            else:
+                raise ValueError('The document is unsigned or has been changed')
 
     def get_text(self):
         pdf_file = open(self.path, 'rb')
@@ -58,8 +63,8 @@ class Document:
 
     def validate(self):
         trailer = pdfrw.PdfReader(self.path)
-        if not trailer.Info.ControlSum:
-            raise ValueError('Document is unsigned')
+        if not trailer.Info or not trailer.Info.ControlSum:
+            return False
         control_sum = str(trailer.Info.ControlSum)
         return self.get_control_sum(self.get_text()) == control_sum[1:len(control_sum) - 1]
 

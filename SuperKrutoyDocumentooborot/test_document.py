@@ -25,11 +25,14 @@ class DocumentClassTest(TestCase):
         self.assertFalse(d.validate())
 
     def test_sign_que(self):
-        flag = True
-        for i, user in enumerate(users):
-            d = Document(user, default_pdf, flag)
-            if i == 0:
-                flag = False
+        d = Document(users[0], default_pdf, True)
+        for user in users:
+            d = Document(user, default_pdf)
             d.sign()
-        self.a
+        self.assertEqual(d.who_signed(), users)
 
+    def test_reset(self):
+        d = Document(users[0], default_pdf, True)
+        for user in users:
+            Document(user, default_pdf).sign()
+        self.assertEqual(Document(users[0], default_pdf, True).who_signed(), [])
