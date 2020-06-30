@@ -1,2 +1,6 @@
-static/* linguist-vendored
-templates/* linguist-vendored
+*.css linguist-detectable=false
+*.java linguist-detectable=false
+*.python linguist-detectable=true 
+*.js linguist-detectable=true
+*.html linguist-detectable=false  
+*.xml linguist-detectable=false 
