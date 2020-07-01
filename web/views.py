@@ -162,12 +162,12 @@ def review(request, filename):
             personal_files_len = personal_files.count()
         else:
             personal_files_len = 0
-        files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
+        files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
         if files_to_contrib:
             files_to_contrib_len = files_to_contrib.count()
             for document in files_to_contrib:
                 deadline = date.fromisoformat(str(document.date))
-                if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+                if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                     deadlines_count += 1
         else:
             files_to_contrib_len = 0
@@ -269,12 +269,12 @@ def show_documents(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
@@ -300,12 +300,12 @@ def search(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
@@ -387,7 +387,7 @@ def apply_edits(request, filename):
             sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
             file.signed = len(sd.who_signed())
             file.signs_number = recipient_counter
-            file.status = 'In progress'
+            file.status = 'В процессе'
         return redirect('web:document_review', new_name)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
@@ -401,7 +401,7 @@ def sign(request, filename):
         print(file.signed)
         owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
-            file.status = 'Success'
+            file.status = 'Готов'
             owner.notifications += 'Файл ' + filename + ' подписан\n'
             owner.save()
         file.save()
@@ -420,11 +420,11 @@ def cancel(request, filename):
     if not isinstance(user, AnonymousUser):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
-        file.status = 'Canceled'
+        file.status = 'Отменен'
         file.signed = 0
         file.save()
         owner = file.owner.all()[0]
-        owner.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
+        owner.notifications += 'Файл ' + filename + ' был не принят пользователем ' + user.username + '\n'
         owner.save()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
