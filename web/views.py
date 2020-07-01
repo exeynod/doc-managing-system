@@ -55,7 +55,8 @@ def signup(request):
         user.groups.set([group])
         user.profile.notifications = ''
         user.save()
-    return redirect('web:login')
+        return redirect('web:login')
+    return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def new_post(request):
@@ -97,6 +98,7 @@ def add_new_document(request):
     if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
+        signs_number = 0
         filename = str(request.POST.get('Filename')).replace(' ', '')
         description = request.POST.get('description')
         if str(description) == '<br>':
@@ -114,6 +116,7 @@ def add_new_document(request):
                 break
             if str(recipient) == 'Выберите пользователя':
                 continue
+            signs_number += 1
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
@@ -123,9 +126,8 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
-        d.signs_number = recipient_counter - 1
+        d.signs_number = signs_number
         d.signed = 0
-        print(d.signs_number)
         d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
@@ -228,10 +230,9 @@ def download(request, filename):
 def user_page(request):
     user = get_user(request)
     if not isinstance(user, AnonymousUser):
-        username = user.username
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
-        context = {'username': username, 'email': user.email, 'notifications': notifications}
+        context = {'username': user.username, 'email': user.email, 'notifications': notifications}
         return render(request, 'web/user-profile-lite.html', context=context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
@@ -244,7 +245,8 @@ def update_account(request):
         password = request.POST.get('password')
         user.username = username
         user.email = email
-        user.set_password(password)
+        if password:
+            user.set_password(password)
         user.save()
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
@@ -348,6 +350,7 @@ def apply_edits(request, filename):
     if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
+        signs_number = 0
         new_name = request.POST.get('Filename')
         description = request.POST.get('description')
         deadline = request.POST.get('Date')
@@ -373,6 +376,7 @@ def apply_edits(request, filename):
                 break
             if str(recipient) == 'Выберите пользователя':
                 continue
+            signs_number += 1
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
@@ -386,7 +390,7 @@ def apply_edits(request, filename):
             path = user_directory_path(owner) + filename + '.pdf'
             sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
             file.signed = len(sd.who_signed())
-            file.signs_number = recipient_counter
+            file.signs_number = signs_number
             file.status = 'In progress'
         return redirect('web:document_review', new_name)
     return render(request, 'web/errors.html', context={'errno': '403'})
@@ -398,7 +402,6 @@ def sign(request, filename):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
-        print(file.signed)
         owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
             file.status = 'Success'
