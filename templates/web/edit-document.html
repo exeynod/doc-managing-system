@@ -175,6 +175,7 @@
                                       <option>Choose recipients</option>
                                             {% for person in persons %}
                                                 {% if person in recipients %}
+                                                    {{ recipients.pop }}
                                                 <option value="{{ person }}" selected>{{ person }}</option>
                                                 {% else %}
                                                 <option value="{{ person }}">{{ person }}</option>

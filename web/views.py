@@ -123,8 +123,9 @@ def add_new_document(request):
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
-        d.signs_number = recipient_counter
+        d.signs_number = recipient_counter - 1
         d.signed = 0
+        print(d.signs_number)
         d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
@@ -161,7 +162,7 @@ def review(request, filename):
             personal_files_len = personal_files.count()
         else:
             personal_files_len = 0
-        files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+        files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
         if files_to_contrib:
             files_to_contrib_len = files_to_contrib.count()
             for document in files_to_contrib:
@@ -172,7 +173,7 @@ def review(request, filename):
             files_to_contrib_len = 0
 
         discussions = DiscussionText.objects.filter(document__filename=filename)
-        file = Document.objects.filter(filename=filename)\
+        file = Document.objects.filter(filename=filename) \
             .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
         owner = file.owner.all()[0]
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
@@ -202,7 +203,7 @@ def new_review(request, filename):
     username = author.username
     description = request.POST.get('description')
     publish_date = datetime.now().date()
-    document = Document.objects.filter(filename=filename)\
+    document = Document.objects.filter(filename=filename) \
         .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
     discussion = DiscussionText.objects.create(author=author.username, description=description,
                                                publish_date=publish_date, document=document)
@@ -268,7 +269,7 @@ def show_documents(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
@@ -299,7 +300,7 @@ def search(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='In progress')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
@@ -309,7 +310,7 @@ def search(request):
     else:
         files_to_contrib_len = 0
     text = request.POST.get('text')
-    files_found = Document.objects.filter(filename=text).\
+    files_found = Document.objects.filter(filename=text). \
         filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
     context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len, 'files_found': files_found}
@@ -329,8 +330,8 @@ def edit_document(request, filename):
             for user in users:
                 persons.add(user.username)
 
-        file = Document.objects.filter(filename=filename).\
-                        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+        file = Document.objects.filter(filename=filename). \
+            filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
         recipients = User.objects.filter(profile__files_to_contrib=file.id)
         recipient_names = list()
         for rec in recipients:
@@ -350,9 +351,11 @@ def apply_edits(request, filename):
         new_name = request.POST.get('Filename')
         description = request.POST.get('description')
         deadline = request.POST.get('Date')
-        file = Document.objects.filter(filename=filename).\
-                        filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
+        file = Document.objects.filter(filename=filename).filter(owner__user_id=user.id)[0]
         if new_name:
+            path = user_directory_path(user)
+            p = Path(path + filename + '.pdf')
+            p.rename(path + new_name + '.pdf')
             file.filename = new_name
         if description:
             file.description = description
@@ -385,7 +388,7 @@ def apply_edits(request, filename):
             file.signed = len(sd.who_signed())
             file.signs_number = recipient_counter
             file.status = 'In progress'
-        return redirect('web:document_review', filename)
+        return redirect('web:document_review', new_name)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
 
@@ -395,6 +398,7 @@ def sign(request, filename):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
+        print(file.signed)
         owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
             file.status = 'Success'
