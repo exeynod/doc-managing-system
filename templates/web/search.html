@@ -210,10 +210,10 @@
                           <td>{{ document.filename }}</td>
                           <td>{{ document.date }}</td>
                           <td>{{ document.description }}</td>
-                          <td>{% if document.status == 'In progress' %}
+                          <td>{% if document.status == 'В процессе' %}
                           <strong class="text-warning">{{ document.status }}</strong>
                               {% else %}
-                                  {% if document.status == "Canceled"%}
+                                  {% if document.status == "Отменен"%}
                               <strong class="text-danger">{{ document.status }}</strong>
                               {% else %}
                               <strong class="text-success">{{ document.status }}</strong>

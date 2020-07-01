@@ -73,8 +73,3 @@ class Document:
         trailer = pdfrw.PdfReader(self.path)
         signed_by = trailer.Info.SignedBy
         return signed_by[1:len(signed_by) - 1].split()
-
-if __name__ == '__main__':
-    d = Document('0', './Rezyume.pdf', True)
-    d = Document('0', './Rezyume.pdf')
-    d.sign()

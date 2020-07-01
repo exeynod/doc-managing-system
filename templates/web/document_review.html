@@ -205,10 +205,10 @@
                         </span>
                           <span class="d-flex mb-2">
                           <strong class="mr-1">Статус:</strong>
-                              {% if status == 'In progress' %}
+                              {% if status == 'В процессе' %}
                           <strong class="text-warning">{{ status }}</strong>
                               {% else %}
-                                  {% if status == "Canceled"%}
+                                  {% if status == "Отменен"%}
                               <strong class="text-danger">{{ status }}</strong>
                               {% else %}
                               <strong class="text-success">{{ status }}</strong>
