@@ -11,6 +11,8 @@ class Document:
         self.primary = primary
         if primary:
             self.sign()
+        else:
+            self.validate()
 
     def get_text(self):
         pdf_file = open(self.path, 'rb')
@@ -36,9 +38,21 @@ class Document:
         control_sum = self.get_control_sum(text)
         trailer = pdfrw.PdfReader(self.path)
         if self.primary:
-            trailer.Info.Owner = self.user_id
-            trailer.Info.ControlSum = control_sum
-            trailer.Info.SignedBy = ''
+            try:
+                trailer.Info.Owner = self.user_id
+                trailer.Info.ControlSum = control_sum
+                trailer.Info.SignedBy = ''
+            except AttributeError:
+                writer = pdfrw.PdfWriter()
+                for page in pdfrw.PdfReader(self.path).pages:
+                    writer.addPage(page)
+                writer.trailer.Info = pdfrw.IndirectPdfDict(
+                    Owner=self.user_id,
+                    ControlSum=control_sum,
+                    SignedBy=''
+                )
+                writer.write(self.path)
+                trailer = pdfrw.PdfReader(self.path)
             self.primary = False
         else:
             if self.validate():
@@ -48,12 +62,15 @@ class Document:
 
     def validate(self):
         trailer = pdfrw.PdfReader(self.path)
-        if not trailer.Info.ControlSum:
-            raise ValueError('Document is unsigned')
+        if not(trailer.Info and trailer.Info.ControlSum):
+            raise ValueError('Document has never been initialized')
         control_sum = str(trailer.Info.ControlSum)
-        return self.get_control_sum(self.get_text()) == control_sum[1:len(control_sum) - 1]
+        if self.get_control_sum(self.get_text()) == control_sum[1:len(control_sum) - 1]:
+            return True
+        raise ValueError('Document has been changed. Control sum doesnt suit the content')
 
     def who_signed(self):
         trailer = pdfrw.PdfReader(self.path)
         signed_by = trailer.Info.SignedBy
         return signed_by[1:len(signed_by) - 1].split()
+

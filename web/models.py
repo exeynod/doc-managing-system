@@ -14,7 +14,7 @@ class Document(models.Model):
     description = models.TextField(null=True)
     signs_number = models.PositiveIntegerField(default=0)
     signed = models.PositiveIntegerField(default=0)
-    status = models.CharField(max_length=25, default='In progress')
+    status = models.CharField(max_length=25, default='В процессе')
 
 
 class Profile(models.Model):

@@ -14,14 +14,13 @@ from pathlib import Path
 from documents import document as Sign_Document
 
 
-def index(request):
+def index(request, alert=None):
     groups = Group.objects.all()
-    context = {'companies': groups}
+    context = {'companies': groups, 'alert': alert}
     return render(request, 'web/main.html', context=context)
 
 
 def log_in(request):
-    user = get_user(request)
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
@@ -44,18 +43,25 @@ def signup(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         groupName = request.POST.get('select-company')
+        userExists = User.objects.filter(username=username).count() != 0
+        emailExists = User.objects.filter(email=email).count() != 0
+        if userExists:
+            return index(request, alert='Пользователь с таким именем уже существует')
+        if emailExists:
+            return index(request, alert='Пользователь с таким email уже существует')
         group = Group.objects.get(name=groupName)
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         user.groups.set([group])
         user.profile.notifications = ''
         user.save()
-    return redirect('web:login')
+        return redirect('web:login')
+    return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def new_post(request):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         # Вписываем уведомления пользователя
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
@@ -89,16 +95,17 @@ def delete_old_file(user, filename):
 
 def add_new_document(request):
     user = get_user(request)
-    if user is not AnonymousUser and request.method == 'POST':
+    if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
+        signs_number = 0
         filename = str(request.POST.get('Filename')).replace(' ', '')
         description = request.POST.get('description')
+        if str(description) == '<br>':
+            description = 'Описание отсутствует'
         deadline = request.POST.get('Date')
         filepath = user_directory_path(user)
         d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
-        d.signs_number = recipient_counter
-        d.save()
         user.profile.personal_files.add(d)
         user.save()
         path = user_directory_path(user) + filename + '.pdf'
@@ -107,17 +114,21 @@ def add_new_document(request):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Choose recipients':
+            if str(recipient) == 'Выберите пользователя':
                 continue
+            signs_number += 1
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'File ' + filename + 'added to your sign list\n'
+            rec_notifications += 'Файл ' + filename + ' был добавлен в список документов на подпись\n'
             rec.profile.notifications = rec_notifications
             rec.profile.files_to_contrib.add(d)
             rec.save()
+        d.signs_number = signs_number
+        d.signed = 0
+        d.save()
         handle_uploaded_file(user, request.FILES.get('file'), filename)
         Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
         return redirect('web:login')
@@ -141,7 +152,7 @@ def csrf_failure(request, reason=""):
 
 def review(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
@@ -153,18 +164,18 @@ def review(request, filename):
             personal_files_len = personal_files.count()
         else:
             personal_files_len = 0
-        files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+        files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
         if files_to_contrib:
             files_to_contrib_len = files_to_contrib.count()
             for document in files_to_contrib:
                 deadline = date.fromisoformat(str(document.date))
-                if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+                if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                     deadlines_count += 1
         else:
             files_to_contrib_len = 0
 
         discussions = DiscussionText.objects.filter(document__filename=filename)
-        file = Document.objects.filter(filename=filename)\
+        file = Document.objects.filter(filename=filename) \
             .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
         owner = file.owner.all()[0]
         reviewer = User.objects.filter(username=username).filter(profile__files_to_contrib=file.id) != 0
@@ -194,7 +205,7 @@ def new_review(request, filename):
     username = author.username
     description = request.POST.get('description')
     publish_date = datetime.now().date()
-    document = Document.objects.filter(filename=filename)\
+    document = Document.objects.filter(filename=filename) \
         .filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
     discussion = DiscussionText.objects.create(author=author.username, description=description,
                                                publish_date=publish_date, document=document)
@@ -218,24 +229,24 @@ def download(request, filename):
 
 def user_page(request):
     user = get_user(request)
-    if user is not AnonymousUser:
-        username = user.username
+    if not isinstance(user, AnonymousUser):
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
-        context = {'username': username, 'email': user.email, 'notifications': notifications}
+        context = {'username': user.username, 'email': user.email, 'notifications': notifications}
         return render(request, 'web/user-profile-lite.html', context=context)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def update_account(request):
     user = get_user(request)
-    if request.method == 'POST' and user is not AnonymousUser:
+    if request.method == 'POST' and not isinstance(user, AnonymousUser):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
         user.username = username
         user.email = email
-        user.set_password(password)
+        if password:
+            user.set_password(password)
         user.save()
         notifications = str(user.profile.notifications).split('\n')
         notifications.remove('')
@@ -246,7 +257,7 @@ def update_account(request):
 
 def show_documents(request):
     user = get_user(request)
-    if user is AnonymousUser:
+    if isinstance(user, AnonymousUser):
         return render(request, 'web/errors.html')
     # Заполним шапку с числоп документов
     username = user.username
@@ -260,12 +271,12 @@ def show_documents(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
@@ -277,7 +288,7 @@ def show_documents(request):
 
 def search(request):
     user = get_user(request)
-    if user is AnonymousUser:
+    if isinstance(user, AnonymousUser):
         return render(request, 'web/errors.html')
     # Заполним шапку с числоп документов
     username = user.username
@@ -291,17 +302,17 @@ def search(request):
         personal_files_len = personal_files.count()
     else:
         personal_files_len = 0
-    files_to_contrib = Document.objects.filter(reviewer__user__username=username)
+    files_to_contrib = Document.objects.filter(reviewer__user__username=username).filter(status='В процессе')
     if files_to_contrib:
         files_to_contrib_len = files_to_contrib.count()
         for document in files_to_contrib:
             deadline = date.fromisoformat(str(document.date))
-            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Success':
+            if deadline - datetime.now().date() <= timedelta(days=1) and document.status != 'Готов':
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
     text = request.POST.get('text')
-    files_found = Document.objects.filter(filename=text).\
+    files_found = Document.objects.filter(filename=text). \
         filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
     context = {'username': username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len, 'files_found': files_found}
@@ -310,7 +321,7 @@ def search(request):
 
 def edit_document(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         # Вписываем уведомления пользователя
         username = user.username
         notifications = str(user.profile.notifications).split('\n')
@@ -321,8 +332,8 @@ def edit_document(request, filename):
             for user in users:
                 persons.add(user.username)
 
-        file = Document.objects.filter(filename=filename).\
-                        filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
+        file = Document.objects.filter(filename=filename). \
+            filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))[0]
         recipients = User.objects.filter(profile__files_to_contrib=file.id)
         recipient_names = list()
         for rec in recipients:
@@ -336,16 +347,18 @@ def edit_document(request, filename):
 
 def apply_edits(request, filename):
     user = get_user(request)
-    if user is not AnonymousUser and request.method == 'POST':
+    if not isinstance(user, AnonymousUser) and request.method == 'POST':
         recipients = list()
         recipient_counter = 1
+        signs_number = 0
         new_name = request.POST.get('Filename')
         description = request.POST.get('description')
         deadline = request.POST.get('Date')
-        file = Document.objects.filter(filename=filename).\
-                        filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
-
+        file = Document.objects.filter(filename=filename).filter(owner__user_id=user.id)[0]
         if new_name:
+            path = user_directory_path(user)
+            p = Path(path + filename + '.pdf')
+            p.rename(path + new_name + '.pdf')
             file.filename = new_name
         if description:
             file.description = description
@@ -361,30 +374,38 @@ def apply_edits(request, filename):
             recipient_counter += 1
             if recipient is None:
                 break
-            if str(recipient) == 'Choose recipients':
+            if str(recipient) == 'Выберите пользователя':
                 continue
+            signs_number += 1
             recipients.append(str(recipient) + '\n')
             # Добавить получателям файл в список файлов на подписание
             rec = User.objects.get(username=recipient)
             # Вписываем уведомления пользователя
             rec_notifications = str(rec.profile.notifications)
-            rec_notifications += 'File ' + filename + 'has been edited\n'
+            rec_notifications += 'Файл ' + filename + ' был изменен\n'
             rec.profile.notifications = rec_notifications
             rec.save()
-        return redirect('web:document_review', filename)
+        if recipient_counter != file.signs_number:
+            owner = file.owner.all()[0]
+            path = user_directory_path(owner) + filename + '.pdf'
+            sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+            file.signed = len(sd.who_signed())
+            file.signs_number = recipient_counter
+            file.status = 'В процессе'
+        return redirect('web:document_review', new_name)
     return render(request, 'web/errors.html', context={'errno': '403'})
 
 
 def sign(request, filename):
     user = get_user(request)
-    if User is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
         file.signed += 1
         owner = file.owner.all()[0]
         if file.signed >= file.signs_number:
-            file.status = 'Success'
-            owner.notifications += 'File ' + filename + ' successfully finished\n'
+            file.status = 'Готов'
+            owner.notifications += 'Файл ' + filename + ' подписан\n'
             owner.save()
         file.save()
         path = user_directory_path(owner) + filename + '.pdf'
@@ -399,14 +420,14 @@ def sign(request, filename):
 
 def cancel(request, filename):
     user = get_user(request)
-    if User is not AnonymousUser:
+    if not isinstance(user, AnonymousUser):
         file = Document.objects.filter(filename=filename). \
             filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
-        file.status = 'Canceled'
+        file.status = 'Отменен'
         file.signed = 0
         file.save()
         owner = file.owner.all()[0]
-        owner.profile.notifications += 'File ' + filename + ' has been canceled by' + user.username + '\n'
+        owner.notifications += 'Файл ' + filename + ' был не принят пользователем ' + user.username + '\n'
         owner.save()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})

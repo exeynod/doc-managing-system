@@ -74,13 +74,20 @@ WSGI_APPLICATION = 'SuperKrutoyDocumentooborot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+import dj_database_url
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'documentooborot',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -125,9 +132,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
+
 import os
 
-if '/app' in os.environ['HOME']:
+if '/app' in os.environ.get('HOME', {}):
     import django_heroku
     # Activate Django-Heroku.
     django_heroku.settings(locals())
