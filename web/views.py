@@ -390,13 +390,8 @@ def apply_edits(request, filename):
             path = user_directory_path(owner) + filename + '.pdf'
             sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
             file.signed = len(sd.who_signed())
-<<<<<<< HEAD
-            file.signs_number = signs_number
-            file.status = 'In progress'
-=======
             file.signs_number = recipient_counter
             file.status = 'В процессе'
->>>>>>> 01095e7f4edc81d488b893ed83a6485313035536
         return redirect('web:document_review', new_name)
     return render(request, 'web/errors.html', context={'errno': '403'})
 

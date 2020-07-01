@@ -62,7 +62,7 @@ class WebsiteTest(TestCase):
         d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
         self.assertEqual(d.filename, 'Newfile')
         self.assertEqual(d.description, 'Описание отсутствует')
-        self.assertEqual(d.status, 'In progress')
+        self.assertEqual(d.status, 'В процессе')
         self.assertEqual(d.signs_number, 1)
         self.assertEqual(d.signed, 0)
 
@@ -123,12 +123,12 @@ class WebsiteTest(TestCase):
         self.test_add_new_post()
         self.c.get('/Newfile/sign/')
         d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
-        self.assertEqual(d.status, 'Success')
+        self.assertEqual(d.status, 'Готов')
         self.assertEqual(d.signed, 1)
 
     def test_calcel(self):
         self.test_add_new_post()
         self.c.get('/Newfile/cancel/')
         d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
-        self.assertEqual(d.status, 'Canceled')
+        self.assertEqual(d.status, 'Отменен')
 

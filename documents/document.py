@@ -73,3 +73,4 @@ class Document:
         trailer = pdfrw.PdfReader(self.path)
         signed_by = trailer.Info.SignedBy
         return signed_by[1:len(signed_by) - 1].split()
+
