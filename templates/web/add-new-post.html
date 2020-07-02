@@ -33,7 +33,6 @@
               </a>
             </nav>
           </div>
-
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
@@ -98,7 +97,7 @@
                     </a>
                   </div>
                   {% endfor %}
-                   {% else %}
+                {% else %}
                     <div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">
                     <a class="dropdown-item" href="#">
                       <div class="notification__icon-wrapper">
@@ -155,9 +154,6 @@
               </div>
 
               <div class="col-lg-3 col-md-12">
-                <!-- Post Overview -->
-
-                <!-- / Post Overview -->
               <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
                     <h6 class="m-0">Срок</h6>
@@ -184,7 +180,7 @@
                     </ul>
                   </div>
                 </div>
-                  {% if persons %}
+                {% if persons %}
                 <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
                     <h6 class="m-0">Пользователи</h6>
@@ -206,22 +202,21 @@
                               </div>
                       </li>
                       {% if persons|length > 1 %}
-                          {% with persons|length|add:"-1" as length %}
-                          {% with ''|center:length as range %}
-                        {% for _ in range %}
+                      {% with persons|length|add:"-1" as length %}
+                      {% with ''|center:length as range %}
+                      {% for _ in range %}
                       <li class="list-group-item px-3" style="display: none;" id="selectUser-{{ forloop.counter|add:"1" }}">
                       <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon1">
-                                      {{ forloop.counter|add:"1" }}</span>
-                                    <select class="custom-select custom-select-sm" style="max-width: 200px;"
-
-                                            name="selectUser-{{ forloop.counter|add:"1" }}">
-                                      <option selected>Выберите пользователя</option>
-                                            {% for person in persons %}
-                                                <option value="{{ person }}">{{ person }}</option>
-                                            {% endfor %}
-                                    </select>
-                              </div>
+                        <span class="input-group-text" id="basic-addon1">
+                          {{ forloop.counter|add:"1" }}</span>
+                        <select class="custom-select custom-select-sm" style="max-width: 200px;"
+                                name="selectUser-{{ forloop.counter|add:"1" }}">
+                        <option selected>Выберите пользователя</option>
+                        {% for person in persons %}
+                        <option value="{{ person }}">{{ person }}</option>
+                        {% endfor %}
+                        </select>
+                      </div>
                         <!-- Конеч цепочки подписей -->
                       </li>
                       {% endfor %}
@@ -238,11 +233,10 @@
                 </div>
               </div>
             </div>
-                  <button type="submit" class="mb-2 btn btn-primary mr-2">Опубликовать</button>
+                <button type="submit" class="mb-2 btn btn-primary mr-2">Опубликовать</button>
               </form>
           </div>
             <!-- End Small Stats Blocks -->
-
           <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
             <ul class="nav">
               <li class="nav-item">
