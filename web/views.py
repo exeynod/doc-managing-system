@@ -431,3 +431,7 @@ def cancel(request, filename):
         owner.save()
         return redirect('web:document_review', filename)
     return render(request, 'web/errors.html', context={'errno': '403'})
+
+
+def certbot_auth(*args, **kwargs):
+    return HttpResponse('wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM.BR9XYxef6ASNw28tTqRyB8aLg2syKH2-cqk8ZnUtr_s')
