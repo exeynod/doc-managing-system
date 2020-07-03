@@ -50,7 +50,7 @@ def get_statistics(request):
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
-    return user, notifications, deadlines_count, files_to_contrib_len,\
+    return user, notifications, deadlines_count, files_to_contrib_len, \
            personal_files_len, personal_files, files_to_contrib
 
 
@@ -188,7 +188,7 @@ def csrf_failure(request, reason=""):
 
 
 def review(request, filename):
-    user, notifications, deadlines_count, files_to_contrib_len, personal_files_len = get_statistics(request)
+    user, notifications, deadlines_count, files_to_contrib_len, personal_files_len, *_ = get_statistics(request)
     discussions = DiscussionText.objects.filter(document__filename=filename)
     file = Document.objects.filter(filename=filename) \
         .filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
@@ -268,8 +268,8 @@ def update_account(request):
 
 
 def show_documents(request):
-    user, notifications, deadlines_count, files_to_contrib_len, personal_files_len,\
-        personal_files, files_to_contrib = get_statistics(request)
+    user, notifications, deadlines_count, files_to_contrib_len, personal_files_len, \
+    personal_files, files_to_contrib = get_statistics(request)
     context = {'username': user.username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                'my_files': personal_files, 'review_files': files_to_contrib}
@@ -277,7 +277,7 @@ def show_documents(request):
 
 
 def search(request):
-    username, notifications, deadlines_count, files_to_contrib_len, personal_files_len = get_statistics(request)
+    username, notifications, deadlines_count, files_to_contrib_len, personal_files_len, *_ = get_statistics(request)
     text = request.POST.get('text')
     files_found = Document.objects.filter(filename=text). \
         filter(Q(owner__user__username=username) | Q(reviewer__user__username=username))
@@ -294,6 +294,7 @@ def edit_document(request, filename):
     recipient_names = list()
     for rec in recipients:
         recipient_names.append(rec.username)
+        persons.remove(rec.username)
     context = {'username': username, 'notifications': notifications, 'persons': persons,
                'filename': filename, 'recipients': recipient_names,
                'deadline': str(file.date)}
