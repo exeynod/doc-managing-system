@@ -103,9 +103,9 @@ def signup(request):
     user = User.objects.create_user(username=username, email=email, password=password)
     user.groups.set([group])
     user.profile.notifications = ''
+    user.profile.approved = False
     user.save()
-    login(request, user)
-    return redirect('web:login')
+    return redirect('web:index')
 
 
 def new_post(request):
