@@ -103,7 +103,6 @@ def signup(request):
     user = User.objects.create_user(username=username, email=email, password=password)
     user.groups.set([group])
     user.profile.notifications = ''
-    user.profile.approved = True
     user.save()
     login(request, user)
     return redirect('web:login')
