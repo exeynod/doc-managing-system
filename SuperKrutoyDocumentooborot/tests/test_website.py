@@ -50,7 +50,7 @@ class WebsiteTest(TestCase):
 
     def test_add_new_post(self):
         self.login()
-        file = open('SuperKrutoyDocumentooborot/test_docs/changed.pdf', 'rb')
+        file = open('SuperKrutoyDocumentooborot/tests/test_docs/changed.pdf', 'rb')
         context = {'Filename': 'New file',
                    'description': '<br>',
                    'Date': datetime.now().date(),

@@ -14,6 +14,7 @@ jobs:
       - run: python -m pytest SuperKrutoyDocumentooborot/tests --ignore=SuperKrutoyDocumentooborot/tests/test_website.py
       - run: python manage.py test --settings=SuperKrutoyDocumentooborot.CI_settings
   deploy:
+    executor: python/default
     steps:
       - checkout
       - add_ssh_keys:
