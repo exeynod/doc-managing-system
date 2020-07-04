@@ -20,6 +20,7 @@ class Document(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     notifications = models.TextField()
+    approved = models.BooleanField(default=False)
     personal_files = models.ManyToManyField(Document, related_name='owner')
     files_to_contrib = models.ManyToManyField(Document, related_name='reviewer')
 

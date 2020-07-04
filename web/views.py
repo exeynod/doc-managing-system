@@ -12,6 +12,7 @@ from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from documents import document as Sign_Document
+from django.contrib.auth.decorators import permission_required
 
 
 def index(request, alert=None):
@@ -73,7 +74,7 @@ def log_in(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         user = authenticate(username=username, password=password)
-        if user is not None:
+        if user is not None and user.profile.approved:
             login(request, user)
         else:
             return render(request, 'web/errors.html')
@@ -100,10 +101,11 @@ def signup(request):
         return index(request, alert='Пользователь с таким email уже существует')
     group = Group.objects.get(name=group_name)
     user = User.objects.create_user(username=username, email=email, password=password)
-    login(request, user)
     user.groups.set([group])
     user.profile.notifications = ''
+    user.profile.approved = True
     user.save()
+    login(request, user)
     return redirect('web:login')
 
 
@@ -387,3 +389,28 @@ def cancel(request, filename):
 
 def certbot_auth(*args, **kwargs):
     return HttpResponse('wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM.BR9XYxef6ASNw28tTqRyB8aLg2syKH2-cqk8ZnUtr_s')
+
+
+@permission_required('auth.change_group')
+def approve(request, username):
+    approve_user = User.objects.get(username=username)
+    approve_user.profile.approved = True
+    approve_user.save()
+    return redirect('web:group')
+
+
+@permission_required('auth.view_group')
+def group_review(request):
+    user = get_user(request)
+    group = Group.objects.filter(name=user.groups.first())[0]
+    persons = User.objects.filter(groups=group)
+    username, notifications, _ = get_username_notification_persons(request)
+    context = {'username': username, 'notifications': notifications, 'persons': persons}
+    return render(request, 'web/group.html', context=context)
+
+
+@permission_required('auth.change_group')
+def remove_user(request, username):
+    user_to_delete = User.objects.get(username=username)
+    user_to_delete.delete()
+    return redirect('web:group')
