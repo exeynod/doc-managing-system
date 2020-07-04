@@ -20,7 +20,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "0b:86:fe:5f:5e:f0:5e:af:54:eb:d1:2e:3a:7f:e6:67"
-      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && deactivate && sudo systemctl restart nginx'
+      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && deactivate && sudo systemctl restart nginx && echo Done!'
 
 workflows:
   build-test-and-deploy:

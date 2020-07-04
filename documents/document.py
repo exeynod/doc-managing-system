@@ -1,6 +1,7 @@
 import PyPDF2
 import pdfrw
 import zlib
+# deployed version
 
 
 class Document:
