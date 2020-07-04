@@ -32,7 +32,6 @@
               </a>
             </nav>
           </div>
-
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
@@ -47,6 +46,14 @@
                   <span>Создать документ</span>
                 </a>
               </li>
+              {% if perms.auth.view_group %}
+              <li class="nav-item">
+                <a class="nav-link " href="{% url 'web:group' %}">
+                  <i class="material-icons">vertical_split</i>
+                  <span>Компания</span>
+                </a>
+              </li>
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link " href="{% url 'web:user' %}">
                   <i class="material-icons">vertical_split</i>
