@@ -11,12 +11,27 @@ jobs:
       - python/load-cache
       - python/install-deps
       - python/save-cache
-      - run:
-          command:
-            python manage.py test --settings=SuperKrutoyDocumentooborot.CI_settings
-          name: Test
+      - run: python -m pytest SuperKrutoyDocumentooborot/tests --ignore=SuperKrutoyDocumentooborot/tests/test_website.py
+      - run: python manage.py test --settings=SuperKrutoyDocumentooborot.CI_settings
+  deploy:
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "0b:86:fe:5f:5e:f0:5e:af:54:eb:d1:2e:3a:7f:e6:67"
+      - run: ssh -o UserKnownHostsFile=/dev/null StrictHostKeychecking=no CI@$HOST
+      - run: cd ./python-dev-project
+      - run: git pull origin master
+      - run: source ./myprojectenv/bin/activate
+      - run: pip install -r requirements.txt
+      - run: pyhton manage.py collectstatic
+      - run: deactivate
+      - run: sudo systemctl restart nginx
 
 workflows:
-  main:
+  build-test-and-deploy:
     jobs:
       - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
