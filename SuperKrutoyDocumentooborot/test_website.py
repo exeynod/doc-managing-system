@@ -38,10 +38,11 @@ class WebsiteTest(TestCase):
         self.assertEqual(User.objects.filter(username='User3').count(), 0)
 
     def test_login(self):
-        User.objects.create_user(username='User', password='qwerty', email='E@mai.l')
+        u = User.objects.create_user(username='User', password='qwerty', email='E@mai.l')
+        u.profile.approved = True
         context = {'username': 'User', 'password': 'qwerty'}
         response = self.c.post('/login/', context)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
 
     def test_bad_login(self):
         context = {'username': 'User5', 'password': '5'}
