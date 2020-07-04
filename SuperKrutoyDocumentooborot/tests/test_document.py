@@ -4,8 +4,8 @@ from documents.document import Document
 
 @pytest.fixture
 def setup():
-    default_pdf = 'SuperKrutoyDocumentooborot/tests/test_docs/default.pdf'
-    changed_pdf = 'SuperKrutoyDocumentooborot/tests/test_docs/changed.pdf'
+    default_pdf = './SuperKrutoyDocumentooborot/tests/test_docs/default.pdf'
+    changed_pdf = './SuperKrutoyDocumentooborot/tests/test_docs/changed.pdf'
     users = [str(i) for i in range(5)]
     return default_pdf, changed_pdf, users
 
