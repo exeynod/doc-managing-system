@@ -46,7 +46,7 @@
                   <span>Создать документ</span>
                 </a>
               </li>
-              {% if perms.auth.view_group %}
+              {% if perms.auth.can_view_group %}
               <li class="nav-item">
                 <a class="nav-link " href="{% url 'web:group' %}">
                   <i class="material-icons">vertical_split</i>
@@ -121,7 +121,8 @@
                 </li>
                 {% endif %}
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle text-nowrap px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  <a class="nav-link dropdown-toggle text-nowrap px-3" data-toggle="dropdown"
+                     href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <span class="d-none d-md-inline-block">{{ username }}</span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-small">
