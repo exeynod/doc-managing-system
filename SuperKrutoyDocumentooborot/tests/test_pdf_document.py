@@ -1,5 +1,5 @@
 import pytest
-from documents.document import Document
+from documents.pdf_document import PDFDocument
 
 
 @pytest.fixture
@@ -12,13 +12,13 @@ def setup():
 
 def test_document_init(setup):
     default_pdf, _, users = setup
-    d = Document(users[0], default_pdf, True)
+    d = PDFDocument(users[0], default_pdf, True)
     assert d.validate()
 
 
 def test_sign(setup):
     default_pdf, _, users = setup
-    d = Document(users[0], default_pdf, True)
+    d = PDFDocument(users[0], default_pdf, True)
     d.sign()
     assert users[0] in d.who_signed()
     assert len(d.who_signed()) == 1
@@ -26,16 +26,16 @@ def test_sign(setup):
 
 def test_sign_que(setup):
     default_pdf, _, users = setup
-    d = Document(users[0], default_pdf, True)
+    d = PDFDocument(users[0], default_pdf, True)
     for user in users:
-        d = Document(user, default_pdf)
+        d = PDFDocument(user, default_pdf)
         d.sign()
     assert d.who_signed() == users
 
 
 def test_reset(setup):
     default_pdf, _, users = setup
-    Document(users[0], default_pdf, True)
+    PDFDocument(users[0], default_pdf, True)
     for user in users:
-        Document(user, default_pdf).sign()
-    assert Document(users[0], default_pdf, True).who_signed() == []
+        PDFDocument(user, default_pdf).sign()
+    assert PDFDocument(users[0], default_pdf, True).who_signed() == []
