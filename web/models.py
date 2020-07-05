@@ -16,6 +16,9 @@ class Document(models.Model):
     signed = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=25, default='В процессе')
 
+    def __str__(self):
+        return self.filename
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -23,6 +26,9 @@ class Profile(models.Model):
     approved = models.BooleanField(default=False)
     personal_files = models.ManyToManyField(Document, related_name='owner')
     files_to_contrib = models.ManyToManyField(Document, related_name='reviewer')
+
+    def __str__(self):
+        return str(self.user)
 
 
 class DiscussionText(models.Model):
