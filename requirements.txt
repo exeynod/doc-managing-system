@@ -33,7 +33,7 @@ pdfrw==0.4
 Pillow==7.1.2
 pluggy==0.13.1
 protobuf==3.6.1
-psycopg2==2.8.5
+psycopg2-binary==2.8.3
 py==1.8.1
 pycodestyle==2.6.0
 pycryptodome==3.9.7
