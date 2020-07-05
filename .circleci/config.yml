@@ -4,6 +4,13 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
+  test-codestyle:
+    executor: python/default
+    steps:
+      - checkout
+      - run: pip install flake8
+      - run: rm -r ./web/migrations
+      - run: flake8 documents SuperKrutoyDocumentooborot web --max-line-length=120
   build-and-test:
     executor: python/default
     steps:
@@ -20,12 +27,17 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "0b:86:fe:5f:5e:f0:5e:af:54:eb:d1:2e:3a:7f:e6:67"
-      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && deactivate && sudo systemctl restart nginx && echo Done!'
+      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && deactivate && sudo systemctl restart nginx && echo Done! && exit'
 
 workflows:
   build-test-and-deploy:
     jobs:
       - build-and-test
+      - test-codestyle
       - deploy:
+          filters:
+            branches:
+              only: master
           requires:
             - build-and-test
+            - test-codestyle

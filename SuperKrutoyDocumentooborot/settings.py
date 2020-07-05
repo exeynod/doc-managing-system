@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -55,8 +56,7 @@ ROOT_URLCONF = 'SuperKrutoyDocumentooborot.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,7 +74,6 @@ WSGI_APPLICATION = 'SuperKrutoyDocumentooborot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-import dj_database_url
 
 DATABASES = {
     'default': {
@@ -137,12 +136,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
-
-import os
-
 if '/app' in os.environ.get('HOME', {}):
     import django_heroku
     # Activate Django-Heroku.
     django_heroku.settings(locals())
-
-

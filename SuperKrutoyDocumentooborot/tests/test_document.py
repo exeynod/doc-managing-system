@@ -35,7 +35,7 @@ def test_sign_que(setup):
 
 def test_reset(setup):
     default_pdf, _, users = setup
-    d = Document(users[0], default_pdf, True)
+    Document(users[0], default_pdf, True)
     for user in users:
         Document(user, default_pdf).sign()
     assert Document(users[0], default_pdf, True).who_signed() == []

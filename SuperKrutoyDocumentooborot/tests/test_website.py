@@ -131,4 +131,3 @@ class WebsiteTest(TestCase):
         self.c.get('/Newfile/cancel/')
         d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
         self.assertEqual(d.status, 'Отменен')
-

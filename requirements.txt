@@ -14,6 +14,7 @@ dnspython==1.16.0
 docx2txt==0.8
 EbookLib==0.17.1
 extract-msg==0.23.1
+flake8==3.8.3
 Flask==1.1.1
 gunicorn==20.0.4
 idna==2.9
@@ -22,6 +23,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.1
 lxml==4.5.1
 MarkupSafe==1.1.1
+mccabe==0.6.1
 more-itertools==8.2.0
 mysql-connector-python==8.0.19
 olefile==0.46
@@ -33,7 +35,9 @@ pluggy==0.13.1
 protobuf==3.6.1
 psycopg2==2.8.5
 py==1.8.1
+pycodestyle==2.6.0
 pycryptodome==3.9.7
+pyflakes==2.2.0
 pyparsing==2.4.7
 PyPDF2==1.26.0
 pytest==5.4.1
