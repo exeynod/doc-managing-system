@@ -11,6 +11,7 @@ dj-database-url==0.5.0
 Django==3.0.6
 django-heroku==0.3.1
 dnspython==1.16.0
+docx==0.2.4
 docx2txt==0.8
 EbookLib==0.17.1
 extract-msg==0.23.1
@@ -33,7 +34,7 @@ pdfrw==0.4
 Pillow==7.1.2
 pluggy==0.13.1
 protobuf==3.6.1
-psycopg2==2.8.5
+psycopg2-binary==2.8.3
 py==1.8.1
 pycodestyle==2.6.0
 pycryptodome==3.9.7
@@ -41,6 +42,7 @@ pyflakes==2.2.0
 pyparsing==2.4.7
 PyPDF2==1.26.0
 pytest==5.4.1
+python-docx==0.8.10
 python-pptx==0.6.18
 pytz==2020.1
 requests==2.23.0
