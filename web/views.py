@@ -50,8 +50,8 @@ def get_statistics(request):
                 deadlines_count += 1
     else:
         files_to_contrib_len = 0
-    return user, notifications, deadlines_count, files_to_contrib_len, \
-           personal_files_len, personal_files, files_to_contrib
+    return user, notifications, deadlines_count, files_to_contrib_len, personal_files_len, personal_files, \
+        files_to_contrib
 
 
 def get_username_notification_persons(request):
@@ -269,7 +269,7 @@ def update_account(request):
 
 def show_documents(request):
     user, notifications, deadlines_count, files_to_contrib_len, personal_files_len, \
-    personal_files, files_to_contrib = get_statistics(request)
+        personal_files, files_to_contrib = get_statistics(request)
     context = {'username': user.username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                'my_files': personal_files, 'review_files': files_to_contrib}
