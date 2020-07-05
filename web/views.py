@@ -12,6 +12,7 @@ from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from documents.factory_document import Creator
+from django.contrib.auth.decorators import permission_required
 
 
 def index(request, alert=None):
@@ -32,7 +33,8 @@ def get_statistics(request):
     # Заполним шапку с числом документов
     username = user.username
     notifications = str(user.profile.notifications).split('\n')
-    notifications.remove('')
+    if notifications.count('') != 0:
+        notifications.remove('')
     user.profile.notifications = ''
     user.save()
     deadlines_count = 0
@@ -74,10 +76,16 @@ def log_in(request):
         password = request.POST.get('password', '')
         user = authenticate(username=username, password=password)
         if user is not None:
+            if not user.profile.approved:
+                context = {'text': 'Пожалуйста, подождите,'
+                                   ' пока администратор группы подтвердит Ваш аккаунт'}
+                return render(request, 'web/errors.html', context)
+
             login(request, user)
         else:
-            return render(request, 'web/errors.html')
-    return redirect('web:cabinet')
+            context = {'text': 'Неверный логин или пароль'}
+            return render(request, 'web/errors.html', context)
+        return redirect('web:cabinet')
 
 
 def log_out(request):
@@ -103,8 +111,9 @@ def signup(request):
     login(request, user)
     user.groups.set([group])
     user.profile.notifications = ''
+    user.profile.approved = False
     user.save()
-    return redirect('web:login')
+    return redirect('web:index')
 
 
 def new_post(request):
@@ -404,3 +413,28 @@ def cancel(request, filename):
 
 def certbot_auth(*args, **kwargs):
     return HttpResponse('wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM.BR9XYxef6ASNw28tTqRyB8aLg2syKH2-cqk8ZnUtr_s')
+
+
+@permission_required('auth.change_group')
+def approve(request, username):
+    approve_user = User.objects.get(username=username)
+    approve_user.profile.approved = True
+    approve_user.save()
+    return redirect('web:group')
+
+
+@permission_required('auth.view_group')
+def group_review(request):
+    user = get_user(request)
+    group = Group.objects.filter(name=user.groups.first())[0]
+    persons = User.objects.filter(groups=group).filter(~Q(username=user.username))
+    username, notifications, _ = get_username_notification_persons(request)
+    context = {'username': username, 'notifications': notifications, 'persons': persons}
+    return render(request, 'web/group.html', context=context)
+
+
+@permission_required('auth.change_group')
+def remove_user(request, username):
+    user_to_delete = User.objects.get(username=username)
+    user_to_delete.delete()
+    return redirect('web:group')
