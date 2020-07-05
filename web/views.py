@@ -132,7 +132,8 @@ def add_new_document(request):
     d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
     user.profile.personal_files.add(d)
     user.save()
-    path = user_directory_path(user) + filename + '.pdf'
+    ext = request.FILES.get('file').name.split('.')[-1]
+    path = user_directory_path(user) + filename + '.' + ext
     d.signs_number = notify_users(request, 'Файл {} был добавлен в список на подписание', d)
     d.signed = 0
     d.save()
