@@ -45,7 +45,7 @@
                   <span>Создать документ</span>
                 </a>
               </li>
-              {% if perms.auth.can_view_group %}
+              {% if perms.auth.view_group %}
               <li class="nav-item">
                 <a class="nav-link " href="{% url 'web:group' %}">
                   <i class="material-icons">vertical_split</i>

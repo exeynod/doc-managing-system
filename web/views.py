@@ -408,7 +408,7 @@ def approve(request, username):
 def group_review(request):
     user = get_user(request)
     group = Group.objects.filter(name=user.groups.first())[0]
-    persons = User.objects.filter(groups=group)
+    persons = User.objects.filter(groups=group).filter(~Q(username=user.username))
     username, notifications, _ = get_username_notification_persons(request)
     context = {'username': username, 'notifications': notifications, 'persons': persons}
     return render(request, 'web/group.html', context=context)
