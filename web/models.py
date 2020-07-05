@@ -22,10 +22,10 @@ class Document(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    notifications = models.TextField(null=True, blank=True)
+    notifications = models.TextField(blank=True)
     approved = models.BooleanField(default=False)
-    personal_files = models.ManyToManyField(Document, related_name='owner', null=True, blank=True)
-    files_to_contrib = models.ManyToManyField(Document, related_name='reviewer', null=True, blank=True)
+    personal_files = models.ManyToManyField(Document, related_name='owner', blank=True)
+    files_to_contrib = models.ManyToManyField(Document, related_name='reviewer', blank=True)
 
     def __str__(self):
         return str(self.user)
