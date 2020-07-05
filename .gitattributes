@@ -1,4 +1,5 @@
 *.css linguist-detectable=false
+*.min.css linguist-detectable=false
 *.java linguist-detectable=false
 *.python linguist-detectable=true 
 *.js linguist-detectable=false
