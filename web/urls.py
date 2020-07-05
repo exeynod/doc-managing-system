@@ -21,5 +21,6 @@ urlpatterns = [
     path('<str:filename>/review/', views.review, name='document_review'),
     path('<str:filename>/review/new/', views.new_review, name='new_document_review'),
     path('<str:filename>/review/download/', views.download, name='new_document_download'),
-    path('.well-known/acme-challenge/wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM', views.certbot_auth, name='certbot_auth')
+    path('.well-known/acme-challenge/wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM',
+         views.certbot_auth, name='certbot_auth')
 ]
