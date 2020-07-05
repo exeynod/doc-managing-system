@@ -33,7 +33,8 @@ def get_statistics(request):
     # Заполним шапку с числоп документов
     username = user.username
     notifications = str(user.profile.notifications).split('\n')
-    notifications.remove('')
+    if notifications.count('') != 0:
+        notifications.remove('')
     user.profile.notifications = ''
     user.save()
     deadlines_count = 0
