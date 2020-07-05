@@ -75,10 +75,15 @@ def log_in(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         user = authenticate(username=username, password=password)
-        if user is not None and user.profile.approved:
+        if user is not None:
+            if not user.profile.approved:
+                context = {'text': 'Пожалуйста, подождите,'
+                                   ' пока администратор группы подтвердит Ваш аккаунт'}
+                return render(request, 'web/errors.html', context)
             login(request, user)
         else:
-            return render(request, 'web/errors.html')
+            context = {'text': 'Неверный логин или пароль'}
+            return render(request, 'web/errors.html', context)
     return redirect('web:cabinet')
 
 

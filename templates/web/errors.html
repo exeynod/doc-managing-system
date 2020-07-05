@@ -23,7 +23,11 @@
           <div class="error">
             <div class="error__content">
               <h2>{{ errno }}</h2>
+              {% if text %}
+              <h3>{{ text }}</h3>
+              {% else %}
               <h3>Что-то пошло не так!</h3>
+              {% endif %}
               <p></p>
               <button type="button" class="btn btn-accent btn-pill" onclick="location.href='{% url "web:index" %}'">&larr; Назад</button>
             </div>
