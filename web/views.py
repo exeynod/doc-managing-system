@@ -8,7 +8,7 @@ from django.contrib.auth import get_user
 from django.conf import settings
 from django.http import HttpResponse
 from .models import Document, DiscussionText
-from datetime import date, datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from documents.factory_document import Creator
 from django.contrib.auth.decorators import permission_required
