@@ -16,12 +16,19 @@ class Document(models.Model):
     signed = models.PositiveIntegerField(default=0)
     status = models.CharField(max_length=25, default='В процессе')
 
+    def __str__(self):
+        return self.filename
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    notifications = models.TextField()
-    personal_files = models.ManyToManyField(Document, related_name='owner')
-    files_to_contrib = models.ManyToManyField(Document, related_name='reviewer')
+    notifications = models.TextField(blank=True)
+    approved = models.BooleanField(default=False)
+    personal_files = models.ManyToManyField(Document, related_name='owner', blank=True)
+    files_to_contrib = models.ManyToManyField(Document, related_name='reviewer', blank=True)
+
+    def __str__(self):
+        return str(self.user)
 
 
 class DiscussionText(models.Model):

@@ -11,7 +11,8 @@ from django.http import HttpResponse
 from .models import Document, DiscussionText
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from documents import document as Sign_Document
+from documents.factory_document import Creator
+from django.contrib.auth.decorators import permission_required
 
 
 def index(request, alert=None):
@@ -29,10 +30,11 @@ def check_logged_in(request):
 
 def get_statistics(request):
     user = check_logged_in(request)
-    # Заполним шапку с числоп документов
+    # Заполним шапку с числом документов
     username = user.username
     notifications = str(user.profile.notifications).split('\n')
-    notifications.remove('')
+    if notifications.count('') != 0:
+        notifications.remove('')
     user.profile.notifications = ''
     user.save()
     deadlines_count = 0
@@ -74,10 +76,16 @@ def log_in(request):
         password = request.POST.get('password', '')
         user = authenticate(username=username, password=password)
         if user is not None:
+            if not user.profile.approved:
+                context = {'text': 'Пожалуйста, подождите,'
+                                   ' пока администратор группы подтвердит Ваш аккаунт'}
+                return render(request, 'web/errors.html', context)
+
             login(request, user)
         else:
-            return render(request, 'web/errors.html')
-    return redirect('web:cabinet')
+            context = {'text': 'Неверный логин или пароль'}
+            return render(request, 'web/errors.html', context)
+        return redirect('web:cabinet')
 
 
 def log_out(request):
@@ -103,8 +111,9 @@ def signup(request):
     login(request, user)
     user.groups.set([group])
     user.profile.notifications = ''
+    user.profile.approved = False
     user.save()
-    return redirect('web:login')
+    return redirect('web:index')
 
 
 def new_post(request):
@@ -168,7 +177,9 @@ def add_new_document(request):
     d.signed = 0
     d.save()
     handle_uploaded_file(user, request.FILES.get('file'), filename)
-    Sign_Document.Document(user_id=str(user.id), path=path, primary=True)
+
+    # setup file in order to lately use it
+    Creator.create(path_to_file=path, user_id=str(user.id), primary=True)
     return redirect('web:login')
 
 
@@ -197,15 +208,23 @@ def review(request, filename):
     path = user_directory_path(owner) + filename + '.pdf'
     if '/app' in path:
         path = path.replace('/app', '.')
-    sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+    sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
     signed = sd.is_signed_by()
+
+    # Начало
     if owner.id == user.id:
         signs_id = sd.who_signed()
+
+        # TODO: используй list comprehension
         signs = list()
         for sign_id in signs_id:
             signs.append(User.objects.get(id=sign_id).username)
+
     else:
         signs = None
+
+    # Конец. предлагаю заменить на:
+    # signs = [User.objects.get(id=sign_id).username for sign_id in sd.who_signed()] if owner.id == user.id else None
     context = {'username': user.username, 'notifications': notifications, 'deadlines': deadlines_count,
                'files_to_sign': files_to_contrib_len, 'personal_files': personal_files_len,
                'discussions': discussions, 'filename': filename, 'file_date': file.date,
@@ -345,8 +364,13 @@ def apply_edits(request, filename):
     if recipient_counter != file.signs_number:
         owner = file.owner.all()[0]
         path = user_directory_path(owner) + filename + '.pdf'
-        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+
+        # Начало TODO: бесполезное присваивание
+        sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
         file.signed = len(sd.who_signed())
+        # Конец. Предлагаю:
+        # file.signed = len(Creator.create(user_id=str(user.id), path_to_file=path, primary=False).who_signed())
+
         file.signs_number = recipient_counter
         file.status = 'В процессе'
     return redirect('web:document_review', new_name)
@@ -364,11 +388,13 @@ def sign(request, filename):
         owner.save()
     file.save()
     path = user_directory_path(owner) + filename + '.pdf'
-    sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
+
+    # Тут я сам заменил, было бесполезное присваивание
+    sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
     signed = sd.is_signed_by()
     if not signed:
-        sd = Sign_Document.Document(user_id=str(user.id), path=path, primary=False)
         sd.sign()
+
     return redirect('web:document_review', filename)
 
 
@@ -387,3 +413,28 @@ def cancel(request, filename):
 
 def certbot_auth(*args, **kwargs):
     return HttpResponse('wl02Bwi2-dCe4gkHdf5kP0XM3m-kuKq8WgVMjGvv2AM.BR9XYxef6ASNw28tTqRyB8aLg2syKH2-cqk8ZnUtr_s')
+
+
+@permission_required('auth.change_group')
+def approve(request, username):
+    approve_user = User.objects.get(username=username)
+    approve_user.profile.approved = True
+    approve_user.save()
+    return redirect('web:group')
+
+
+@permission_required('auth.view_group')
+def group_review(request):
+    user = get_user(request)
+    group = Group.objects.filter(name=user.groups.first())[0]
+    persons = User.objects.filter(groups=group).filter(~Q(username=user.username))
+    username, notifications, _ = get_username_notification_persons(request)
+    context = {'username': username, 'notifications': notifications, 'persons': persons}
+    return render(request, 'web/group.html', context=context)
+
+
+@permission_required('auth.change_group')
+def remove_user(request, username):
+    user_to_delete = User.objects.get(username=username)
+    user_to_delete.delete()
+    return redirect('web:group')
