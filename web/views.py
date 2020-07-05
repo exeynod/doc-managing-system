@@ -42,6 +42,8 @@ def log_in(request):
             context = {'text': 'Неверный логин или пароль'}
             return render(request, 'web/errors.html', context)
         return redirect('web:cabinet')
+    context = {'text': 'Повторите вход'}
+    return render(request, 'web/errors.html', context)
 
 
 def log_out(request):
