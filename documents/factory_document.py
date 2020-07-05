@@ -10,4 +10,3 @@ class Creator:
         if path_to_file[len(path_to_file) - 4:] == '.pdf':
             return PDFDocument(user_id, path_to_file, primary)
         raise ValueError('Invalid extension')
-
