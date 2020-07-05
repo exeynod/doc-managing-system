@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Профиль</title>
+    <title>Мои документы</title>
     <meta name="description" content="A high-quality &amp; free Bootstrap admin dashboard template pack that comes with lots of templates and components.">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
@@ -17,6 +17,7 @@
   <body class="h-100">
     <div class="container-fluid">
       <div class="row">
+        <!-- Main Sidebar -->
         <aside class="main-sidebar col-12 col-md-3 col-lg-2 px-0">
           <div class="main-navbar">
             <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap border-bottom p-0">
@@ -34,7 +35,7 @@
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'web:login' %}">
+                <a class="nav-link active" href="{% url 'web:login' %}">
                   <i class="material-icons">edit</i>
                   <span>Главная</span>
                 </a>
@@ -54,7 +55,7 @@
               </li>
               {% endif %}
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'web:user' %}">
+                <a class="nav-link " href="{% url 'web:user' %}">
                   <i class="material-icons">vertical_split</i>
                   <span>Профиль</span>
                 </a>
@@ -62,6 +63,7 @@
             </ul>
           </div>
         </aside>
+        <!-- End Main Sidebar -->
         <main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
           <div class="main-navbar sticky-top bg-white">
             <!-- Main Navbar -->
@@ -112,7 +114,7 @@
                         </div>
                       </div>
                       <div class="notification__content">
-                        <p>Оповещения отсутствуют</p>
+                        <p>Нет новых уведомлений</p>
                       </div>
                     </a>
                   </div>
@@ -140,48 +142,55 @@
             <!-- Page Header -->
             <div class="page-header row no-gutters py-4">
               <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
-                <span class="text-uppercase page-subtitle">Обзор</span>
-                <h3 class="page-title">Профиль</h3>
+                <span class="text-uppercase page-subtitle"></span>
+                <h3 class="page-title">Мои документы</h3>
               </div>
             </div>
             <!-- End Page Header -->
-            <!-- Default Light Table -->
-           <div class="main-content-container container-fluid px-4">
+            <!-- Small Stats Blocks -->
+              <!-- Default Light Table -->
             <div class="row">
-              <div class="col-lg-8">
+              <div class="col">
                 <div class="card card-small mb-4">
                   <div class="card-header border-bottom">
-                    <h6 class="m-0">Детали</h6>
+                    <h6 class="m-0">Пользователи</h6>
                   </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item p-3">
-                      <div class="row">
-                        <div class="col">
-                          <form method="post" action="{% url 'web:update_account' %}">
-                              {% csrf_token %}
-                            <div class="form-row">
-                              <div class="form-group col-md-6">
-                                <label for="feFirstName">Ник</label>
-                                <input type="text" name="username" class="form-control" id="feFirstName" placeholder="Username" value="{{ username }}"> </div>
-                            </div>
-                            <div class="form-row">
-                              <div class="form-group col-md-6">
-                                <label for="feEmailAddress">Email</label>
-                                <input type="email" class="form-control" name="email" id="feEmailAddress" placeholder="Email" value="{{ email }}"> </div>
-                              <div class="form-group col-md-6">
-                                <label for="fePassword">Пароль</label>
-                                <input type="password" class="form-control" name="password" id="fePassword" placeholder="Password"> </div>
-                            </div>
-                            <button type="submit" class="btn btn-accent">Обновить</button>
-                          </form>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
+                  <div class="card-body p-0 pb-3 text-center">
+                    <table class="table mb-0">
+                      <thead class="bg-light">
+                        <tr>
+                          <th scope="col" class="border-0">Имя</th>
+                          <th scope="col" class="border-0">Подтверждение</th>
+                          <th scope="col" class="border-0">Подтвердить</th>
+                          <th scope="col" class="border-0">Удалить</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% if persons %}
+                      {% for p in persons %}
+                        <tr>
+                          <td>{{ p.username }}</td>
+                            {% if p.profile.approved %}
+                            <td><strong class="text-success">Подтвержден</strong></td>
+                            <td><strong class="text-success">Уже подтвержден</strong></td>
+                            {% else %}
+                            <td><strong class="text-warning">Не подтвержден</strong></td>
+                            <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Подтвердить"
+                          onclick="window.location.href='{% url "web:approve" p.username %}'"></td>
+                            {% endif %}
+                          <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Удалить"
+                          onclick="window.location.href='{% url "web:remove_user" p.username %}'"></td>
+                          <td></td>
+                        </tr>
+                      {% endfor %}
+                      {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
-           </div>
+            <!-- End Default Light Table -->
           </div>
           <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
             <ul class="nav">
