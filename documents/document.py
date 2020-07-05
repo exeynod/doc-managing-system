@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from documents.logging_dir.logging_decorators import init_logger
 import zlib
 
+
 class Document(ABC):
 
     @staticmethod
