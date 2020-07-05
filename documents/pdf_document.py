@@ -2,10 +2,12 @@ import PyPDF2
 import pdfrw
 import zlib
 from documents.document import Document
+from documents.logging import logging_decorators
 
 
 class PDFDocument(Document):
 
+    @logging_decorators.init_logger
     def __init__(self, user_id, path, primary=False):
         self.user_id = user_id
         self.path = path
@@ -57,6 +59,7 @@ class PDFDocument(Document):
     def is_signed_by(self):
         return True if self.user_id in self.who_signed() else False
 
+    @logging_decorators.sign_logger
     def sign(self):
         trailer = pdfrw.PdfReader(self.path)
         if self.validate():
