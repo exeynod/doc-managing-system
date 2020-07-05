@@ -9,6 +9,7 @@ jobs:
     steps:
       - checkout
       - run: pip install flake8
+      - run: rm -r ./web/migrations
       - run: flake8 documents SuperKrutoyDocumentooborot web --max-line-length=120
   build-and-test:
     executor: python/default
@@ -28,7 +29,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "0b:86:fe:5f:5e:f0:5e:af:54:eb:d1:2e:3a:7f:e6:67"
-      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && python manage.py makemigrations && python manage,py migrate && deactivate && sudo systemctl restart nginx && echo Done! && exit'
+      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install psycopg2-binary && pip install -r requirements.txt && python3 manage.py collectstatic --noinput && python manage.py makemigrations && python manage,py migrate && deactivate && sudo systemctl restart nginx && echo Done! && exit'
 
 workflows:
   build-test-and-deploy:
