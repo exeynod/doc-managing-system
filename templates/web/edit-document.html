@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Shards Dashboard Lite - Free Bootstrap Admin Template – DesignRevision</title>
+    <title>Изменить документ</title>
     <meta name="description" content="A high-quality &amp; free Bootstrap admin dashboard template pack that comes with lots of templates and components.">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
@@ -13,10 +13,10 @@
     <link rel="stylesheet" id="main-stylesheet" data-version="1.1.0" href="{% static 'web/styles/shards-dashboards.1.1.0.min.css' %}">
     <link rel="stylesheet" href="{% static 'web/styles/extras.1.1.0.min.css' %}">
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}" ></script>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.css">
   </head>
   <body class="h-100">
-
     <div class="container-fluid">
       <div class="row">
         <aside class="main-sidebar col-12 col-md-3 col-lg-2 px-0">
@@ -25,7 +25,7 @@
               <a class="navbar-brand w-100 mr-0" href="{% url 'web:login' %}" style="line-height: 25px;">
                 <div class="d-table m-auto">
                   <img id="main-logo" class="d-inline-block align-top mr-1" style="max-width: 25px;" src="{% static 'web/images/shards-dashboards-logo.svg' %}" alt="Документус">
-                  <span class="d-none d-md-inline ml-1">Shards Dashboard</span>
+                  <span class="d-none d-md-inline ml-1">Электронный документооборот</span>
                 </div>
               </a>
               <a class="toggle-sidebar d-sm-inline d-md-none d-lg-none">
@@ -33,25 +33,24 @@
               </a>
             </nav>
           </div>
-
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'web:login' %}">
                   <i class="material-icons">edit</i>
-                  <span>Cabinet</span>
+                  <span>Главная</span>
                 </a>
               </li>
                 <li class="nav-item">
                 <a class="nav-link active" href="{% url 'web:new-post' %}">
                   <i class="material-icons">note_add</i>
-                  <span>Add New Document</span>
+                  <span>Создать документ</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link " href="{% url 'web:user' %}">
                   <i class="material-icons">vertical_split</i>
-                  <span>Profile</span>
+                  <span>Профиль</span>
                 </a>
               </li>
             </ul>
@@ -70,7 +69,8 @@
                     </div>
                   </div>
                 </div>
-                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." name="text">
+                  <input class="navbar-search form-control" type="text" placeholder="Поиск..." name="text">
+                  <input class="navbar-search form-control" type="text" placeholder="Поиск..." name="text">
               </form>
                 <!-- Уведомления -->
               <ul class="navbar-nav border-left flex-row ">
@@ -107,7 +107,7 @@
                         </div>
                       </div>
                       <div class="notification__content">
-                        <p>There's no new notifications</p>
+                        <p>Нет оповещений</p>
                       </div>
                     </a>
                   </div>
@@ -119,7 +119,7 @@
                   </a>
                   <div class="dropdown-menu dropdown-menu-small">
                     <a class="dropdown-item text-danger" href="{% url 'web:logout' %}">
-                      <i class="material-icons text-danger">&#xE879;</i> Logout </a>
+                      <i class="material-icons text-danger">&#xE879;</i> Выход </a>
                   </div>
                 </li>
               </ul>
@@ -147,112 +147,107 @@
                   <div class="card-body">
                       <input class="form-control form-control-lg mb-1" type="text"
                              placeholder="Filename" id="Filename" name="Filename" value="{{ filename }}">
-                        <small class="errorReq mb-3"  style="display: none; color: red;" id="emptyFilename"><i></i> This field can't be empty</small>
+                        <small class="errorReq mb-3"  style="display: none; color: red;" id="emptyFilename"><i></i> Это поле не может быть пустым</small>
                       <div id="editor-container" class="add-new-post__editor mb-1"></div>
                       <input name="description" value="" style="display: none;" id="description">
                   </div>
                 </div>
                 <!-- / Add New Post Form -->
               </div>
-                {% if persons %}
               <div class="col-lg-3 col-md-12">
                 <!-- Post Overview -->
                 <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
                     <h6 class="m-0">Recipients</h6>
-                  <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Choose at least one recipient</small>
+                  <small class="errorReq"  style="display: none; color: red;" id="emptySelect"><i></i> Выберите хотя бы одного пользователя</small>
                   </div>
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
-                    {% if persons|length < 5 %}
-
-                        {% for _ in persons %}
+                        {% for _ in recipients %}
                       <li class="list-group-item d-flex px-3">
                         <!-- Начало блока инициации цепочки пользователей -->
                       <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon1">{{ forloop.counter }}</span>
-                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectUser-{{ forloop.counter }}" name="selectUser-{{ forloop.counter }}">
-                                      <option>Choose recipients</option>
-                                            {% for person in persons %}
-                                                {% if person in recipients %}
-                                                <option value="{{ person }}" selected>{{ person }}</option>
-                                                {% else %}
-                                                <option value="{{ person }}">{{ person }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                    </select>
-                              </div>
+                        <span class="input-group-text" id="basic-addon1">{{ forloop.counter }}</span>
+                        <select class="custom-select custom-select-sm"
+                                style="max-width: 200px;" name="selectUser-{{ forloop.counter }}">
+                          <option>Choose recipients</option>
+                          {% for rec in recipients %}
+                          <option value="{{ person }}" selected>{{ rec }}</option>
+                          {{ recipients.pop }}
+                          {% endfor %}
+                        </select>
+                      </div>
                         <!-- Конеч цепочки подписей -->
                       </li>
                       {% endfor %}
-                    {% else %}
-                        {% for i in '1234'|make_list %}
-                      <li class="list-group-item d-flex px-3">
+                      {% for _ in persons %}
+                      {% with recipients|length as len %}
+                      <li class="list-group-item px-3"
+                          style="display: none;" id="selectUser-{{ forloop.counter|add:'1' }}">
                         <!-- Начало блока инициации цепочки пользователей -->
                       <div class="input-group-prepend">
-                                  <span class="input-group-text" id="basic-addon1">{{ i }}</span>
-                                    <select class="custom-select custom-select-sm" style="max-width: 200px;" id="selectUser-{{ forloop.counter }}" name="selectUser-{{ forloop.counter }}">
-                                      <option selected>Choose recipients</option>
-                                            {{% for person in persons %}
-                                                {% if person in recipients %}
-                                                <option value="{{ person }}" selected>{{ person }}</option>
-                                                {% else %}
-                                                <option value="{{ person }}">{{ person }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                    </select>
-                              </div>
-                        <!-- Конеч цепочки подписей -->
+                        <span class="input-group-text" id="basic-addon1">{{ forloop.counter|add:len|add:"1" }}</span>
+                        <select class="custom-select custom-select-sm"
+                                style="max-width: 200px;"
+                                name="selectUser-{{ forloop.counter|add:len|add:'1' }}">
+                          <option>Choose recipients</option>
+                          {% for person in persons %}
+                          <option value="{{ person }}"> {{ person }} </option>
+                          {% endfor %}
+                        </select>
+                        {% endwith %}
+                      </div>
                       </li>
                       {% endfor %}
-                      <button class="btn btn-sm btn-accent ml-auto"> Add more users</button>
-                    {% endif %}
+                       <li class="list-group-item px-3">
+                            <button type="button" class="mb-2 btn btn-primary mr-2" id="more_recipients_button"
+                                    onclick="return more_recipients();">Больше получателей</button>
+                        </li>
+                        <!-- Конеч цепочки подписей -->
                     </ul>
                   </div>
-                {% endif %}
                 </div>
                 <!-- / Post Overview -->
               <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
-                    <h6 class="m-0">Deadline</h6>
+                    <h6 class="m-0">Срок</h6>
                   </div>
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item p-3">
                         <input type="date" id="Deadline" value="{{ deadline }}" name="Date"><br>
-                          <small class="errorReq"  style="display: none; color: red;" id="emptyDeadline"><i></i> Date field can't be empty</small>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyDeadline"><i></i> Дата не может быть пустой</small>
                       </li>
                     </ul>
                   </div>
                 </div>
               <div class='card card-small mb-3'>
                   <div class="card-header border-bottom">
-                    <h6 class="m-0">Attach file</h6>
+                    <h6 class="m-0">Файл</h6>
                   </div>
                   <div class='card-body p-0'>
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item p-3">
                         <input type="file" id="File" name="file"><br>
-                          <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> File field can't be empty</small>
+                          <small class="errorReq"  style="display: none; color: red;" id="emptyFile"><i></i> Загрузите файл</small>
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
-                  <button type="submit" class="mb-2 btn btn-primary mr-2">Confirm</button>
+                  <button type="submit" class="mb-2 btn btn-primary mr-2">Подтвердить</button>
               </form>
           </div>
             <!-- End Small Stats Blocks -->
-
           <footer class="main-footer d-flex p-2 px-3 bg-white border-top">
             <ul class="nav">
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'web:login' %}">Home</a>
+                <a class="nav-link" href="{% url 'web:login' %}">Домой</a>
               </li>
             </ul>
-            <span class="copyright ml-auto my-auto mr-2">Copyright © 2018
-              <a href="https://designrevision.com" rel="nofollow">DesignRevision</a>
+            <span class="copyright ml-auto my-auto mr-2">Copyright © 2020
+              <a href="https://designrevision.com" rel="nofollow"></a>
             </span>
           </footer>
         </main>
@@ -269,6 +264,5 @@
     <script src="{% static 'web/scripts/shards-dashboards.1.1.0.min.js' %}" ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
     <script src="{% static 'web/scripts/app/app-blog-new-post.1.1.0.js' %}"></script>
-    <script src="{% static 'web/scripts/app/app-register-form-validation.js' %}" ></script>
   </body>
 </html>

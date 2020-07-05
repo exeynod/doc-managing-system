@@ -105,7 +105,7 @@ function registerCompany() {
 function postValidation() {
 	var filenameId = document.getElementById('Filename');
 	var firstSelect = document.getElementById('selectUser-1');
-	var date = new Date(document.getElementById('Deadline').value);
+	var date = document.getElementById('Deadline');
 	var fileId = document.getElementById('File')
 
 	var errorFilename = document.getElementById('emptyFilename');
@@ -122,18 +122,29 @@ function postValidation() {
 		errorFilename.style.display = 'block';
 		return false;
 	}
-	if (firstSelect.value === 'Choose recipients') {
+	if (firstSelect.value === 'Выберите пользователя') {
 		errorSelect.style.display = 'block';
 		return false;
 	}
-	if (isNaN(date)) {
+	if (!moment(date.value, 'YYYY-MM-DD',true).isValid()) {
 		errorDeadline.style.display = 'block';
 		return false;
 	}
+
 	if (fileId.files.length === 0) {
 		emptyFileId.style.display = 'block';
 		return false;
 	}
+
+	var parts = fileId.files[0].name.split('.');
+	var ext = 'undefined';
+	if (parts.length > 1) ext = parts.pop();
+
+	if (ext !== 'pdf') {
+		emptyFileId.style.display = 'block';
+		return false;
+	}
+
 	add_hidden_input();
 	return true;
 }
@@ -160,5 +171,21 @@ function add_note() {
 		form.style.display = 'none';
 		publishButtonId.value = 'Publish';
 	}
+	return false;
+}
+
+var select_counter = 1;
+
+function more_recipients() {
+	select_counter += 1;
+	var select_name = "selectUser-" + select_counter.toString();
+	var select_id = document.getElementById(select_name);
+	var more_recipients_button_id = document.getElementById("more_recipients_button");
+	if (select_id !== null)
+		select_id.style.display = "flex";
+
+	var next_recipient = select_counter + 1;
+	if (document.getElementById("selectUser-" + next_recipient.toString()) === null)
+		more_recipients_button_id.style.display = "none";
 	return false;
 }
