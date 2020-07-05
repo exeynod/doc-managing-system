@@ -140,8 +140,12 @@ function postValidation() {
 	var ext = 'undefined';
 	if (parts.length > 1) ext = parts.pop();
 
-	if (ext !== 'pdf' && ext !== 'docx') {
-		emptyFileId.style.display = 'block';
+	if (ext === 'pdf' || ext === 'docx') {
+		emptyFileId.style.display = 'none';
+		return false;
+	}
+	else {
+		emptyFileId.style.display = 'block;';
 		return false;
 	}
 
