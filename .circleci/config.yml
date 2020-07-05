@@ -8,6 +8,7 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      - run: pip install flake8
       - run: flake8 documents SuperKrutoyDocumentooborot --max-line-length=120
   build-and-test:
     executor: python/default
@@ -37,5 +38,5 @@ workflows:
             branches:
               only: master
           requires:
-            - test-codestyle
+            - build-and-test
             - test-codestyle
