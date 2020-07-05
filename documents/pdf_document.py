@@ -1,25 +1,10 @@
 import PyPDF2
 import pdfrw
-import zlib
 from documents.document import Document
-from documents.logging import logging_decorators
+from documents.logging_dir import logging_decorators
 
 
 class PDFDocument(Document):
-
-    @logging_decorators.init_logger
-    def __init__(self, user_id, path, primary=False):
-        self.user_id = user_id
-        self.path = path
-        self.primary = primary
-        if primary:
-            self.set_up_file()
-        else:
-            self.validate()
-
-    @staticmethod
-    def get_control_sum(text):
-        return str(hex(zlib.crc32(str.encode(text)) & 0xffffffff))
 
     def get_text(self):
         with open(self.path, 'rb') as pdf_file:

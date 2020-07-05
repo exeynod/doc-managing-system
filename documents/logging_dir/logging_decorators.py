@@ -1,4 +1,4 @@
-from documents.logging.setup_logger import info_logger, error_logger
+from documents.logging_dir.setup_logger import info_logger, error_logger
 
 
 def init_logger(func):
