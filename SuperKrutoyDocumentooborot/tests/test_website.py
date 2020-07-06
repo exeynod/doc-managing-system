@@ -60,8 +60,8 @@ class WebsiteTest(TestCase):
                    }
         response = self.c.post('/add-post/', context)
         self.assertEqual(response.status_code, 302)
-        d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
-        self.assertEqual(d.filename, 'Newfile')
+        d = Document.objects.get(filename='Newfile.pdf', owner__user__username='Admin')
+        self.assertEqual(d.filename, 'Newfile.pdf')
         self.assertEqual(d.description, 'Описание отсутствует')
         self.assertEqual(d.status, 'В процессе')
         self.assertEqual(d.signs_number, 1)
@@ -69,7 +69,7 @@ class WebsiteTest(TestCase):
 
     def test_review(self):
         self.test_add_new_post()
-        response = self.c.get('/Newfile/review/')
+        response = self.c.get('/Newfile.pdf/review/')
         c = response.context
         self.assertEqual(response.status_code, 200)
         self.assertEqual(isinstance(response.context['user'], AnonymousUser), 0)
@@ -82,8 +82,8 @@ class WebsiteTest(TestCase):
     def test_new_review(self):
         self.test_add_new_post()
         context = {'description': 'Test edits'}
-        self.c.post('/Newfile/review/new/', context)
-        response = self.c.get('/Newfile/review/')
+        self.c.post('/Newfile.pdf/review/new/', context)
+        response = self.c.get('/Newfile.pdf/review/')
         c = response.context
         self.assertEqual(len(c['discussions']), 1)
 
@@ -116,19 +116,19 @@ class WebsiteTest(TestCase):
 
     def test_search(self):
         self.test_add_new_post()
-        context = {'text': 'Newfile'}
+        context = {'text': 'Newfile.pdf'}
         response = self.c.post('/search/', context)
         self.assertEqual(len(response.context['files_found']), 1)
 
     def test_sign(self):
         self.test_add_new_post()
-        self.c.get('/Newfile/sign/')
-        d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
+        self.c.get('/Newfile.pdf/sign/')
+        d = Document.objects.get(filename='Newfile.pdf', owner__user__username='Admin')
         self.assertEqual(d.status, 'Готов')
         self.assertEqual(d.signed, 1)
 
     def test_calcel(self):
         self.test_add_new_post()
-        self.c.get('/Newfile/cancel/')
-        d = Document.objects.get(filename='Newfile', owner__user__username='Admin')
+        self.c.get('/Newfile.pdf/cancel/')
+        d = Document.objects.get(filename='Newfile.pdf', owner__user__username='Admin')
         self.assertEqual(d.status, 'Отменен')
