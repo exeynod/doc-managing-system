@@ -104,7 +104,7 @@ function registerCompany() {
 
 function postValidation() {
 	var filenameId = document.getElementById('Filename');
-	var firstSelect = document.getElementById('selectUser-1');
+	var firstSelect = document.getElementById('select-1');
 	var date = document.getElementById('Deadline');
 	var fileId = document.getElementById('File')
 
