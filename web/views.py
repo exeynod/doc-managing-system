@@ -122,9 +122,7 @@ def notify_users(request, text, document):
 
 
 def add_new_document(request):
-    user = get_user(request)
-    if isinstance(user, AnonymousUser) or request.method != 'POST':
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     filename = str(request.POST.get('Filename')).replace(' ', '')
     description = request.POST.get('description')
     if str(description) == '<br>':
@@ -168,7 +166,7 @@ def review(request, filename):
     file = Document.objects.filter(filename=filename) \
         .filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
     owner = file.owner.all()[0]
-    reviewer = User.objects.filter(username=user.username).filter(profile__files_to_contrib=file.id) != 0
+    reviewer = User.objects.filter(username=user.username).filter(profile__files_to_contrib=file.id).count() != 0
     path = user_directory_path(owner) + filename + '.pdf'
     if '/app' in path:
         path = path.replace('/app', '.')
@@ -181,7 +179,7 @@ def review(request, filename):
                'filename': filename, 'file_date': file.date,
                'description': file.description, 'owner': owner.id == user.id,
                'reviewer': reviewer, 'status': str(file.status),
-               'signed': sd.who_signed(), 'signs': signs,
+               'signed': sd.who_signed().count(user.id) != 0, 'signs': signs,
                'notifications': notifications}
     context.update(personal_context)
     return render(request, 'web/document_review.html', context)
@@ -222,9 +220,7 @@ def user_page(request):
 
 
 def update_account(request):
-    user = get_user(request)
-    if request.method != 'POST' or isinstance(user, AnonymousUser):
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     username = request.POST.get('username')
     email = request.POST.get('email')
     password = request.POST.get('password')
@@ -273,9 +269,7 @@ def edit_document(request, filename):
 
 
 def apply_edits(request, filename):
-    user = get_user(request)
-    if isinstance(user, AnonymousUser) or request.method != 'POST':
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     recipient_counter = 1
     new_name = request.POST.get('Filename')
     description = request.POST.get('description')
