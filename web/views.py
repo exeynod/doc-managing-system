@@ -89,13 +89,13 @@ def user_directory_path(user):
 def handle_uploaded_file(user, file, filename):
     path = user_directory_path(user)
     Path(path).mkdir(parents=True, exist_ok=True)
-    with open(path + filename + '.pdf', 'wb+') as destination:
+    with open(path + filename, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
 
 
 def delete_old_file(user, filename):
-    path = user_directory_path(user) + filename + '.pdf'
+    path = user_directory_path(user) + filename
     Path(path).unlink(missing_ok=True)
 
 
@@ -123,7 +123,8 @@ def notify_users(request, text, document):
 
 def add_new_document(request):
     user = check_logged_in(request)
-    filename = str(request.POST.get('Filename')).replace(' ', '')
+    ext = request.FILES.get('file').name.split('.')[-1]
+    filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
     description = request.POST.get('description')
     if str(description) == '<br>':
         description = 'Описание отсутствует'
@@ -132,8 +133,7 @@ def add_new_document(request):
     d = Document.objects.create(filename=filename, filepath=filepath, date=deadline, description=description)
     user.profile.personal_files.add(d)
     user.save()
-    ext = request.FILES.get('file').name.split('.')[-1]
-    path = user_directory_path(user) + filename + '.' + ext
+    path = user_directory_path(user) + filename
     d.signs_number = notify_users(request, 'Файл {} был добавлен в список на подписание', d)
     d.signed = 0
     d.save()
@@ -167,7 +167,7 @@ def review(request, filename):
         .filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))[0]
     owner = file.owner.all()[0]
     reviewer = User.objects.filter(username=user.username).filter(profile__files_to_contrib=file.id).count() != 0
-    path = user_directory_path(owner) + filename + '.pdf'
+    path = user_directory_path(owner) + filename
     if '/app' in path:
         path = path.replace('/app', '.')
     sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
@@ -200,7 +200,7 @@ def new_review(request, filename):
 
 def download(request, filename):
     user = get_user(request)
-    file = user_directory_path(user) + filename + '.pdf'
+    file = user_directory_path(user) + filename
     with open(file, 'rb') as f:
         response = HttpResponse(f.read())
         file_type = mimetypes.guess_type(file)
@@ -208,7 +208,7 @@ def download(request, filename):
             file_type = 'application/octet-stream'
         response['Content-Type'] = file_type
         response['Content-Length'] = str(os.stat(file).st_size)
-        response['Content-Disposition'] = f"attachment; filename={filename}.pdf"
+        response['Content-Disposition'] = f"attachment; filename={filename}"
     return response
 
 
@@ -277,8 +277,8 @@ def apply_edits(request, filename):
     file = Document.objects.filter(filename=filename).filter(owner__user_id=user.id)[0]
     if new_name:
         path = user_directory_path(user)
-        p = Path(path + filename + '.pdf')
-        p.rename(path + new_name + '.pdf')
+        p = Path(path + filename)
+        p.rename(path + new_name)
         file.filename = new_name
     if description:
         file.description = description
@@ -286,13 +286,15 @@ def apply_edits(request, filename):
         file.date = deadline
     new_file = request.FILES.get('file')
     if new_file:
+        ext = request.FILES.get('file').name.split('.')[-1]
+        new_name = new_name + '.' + ext
         delete_old_file(user, filename)
         handle_uploaded_file(user, new_file, new_name)
     file.save()
     signs_number = notify_users(request, 'Файл {} был изменен\n', file)
     if signs_number != file.signs_number:
         owner = file.owner.all()[0]
-        path = user_directory_path(owner) + filename + '.pdf'
+        path = user_directory_path(owner) + filename
         sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
         file.signed = len(sd.who_signed())
         file.signs_number = recipient_counter
@@ -311,7 +313,7 @@ def sign(request, filename):
         owner.notifications += 'Файл ' + filename + ' подписан\n'
         owner.save()
     file.save()
-    path = user_directory_path(owner) + filename + '.pdf'
+    path = user_directory_path(owner) + filename
     sd = Creator.create(user_id=str(user.id), path_to_file=path, primary=False)
     signed = sd.is_signed_by()
     if not signed:
