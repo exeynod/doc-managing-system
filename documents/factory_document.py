@@ -12,4 +12,4 @@ class Creator:
             return PDFDocument(user_id, path_to_file, primary)
         if path_to_file[len(path_to_file) - 5:] == '.docx':
             return DOCXDocument(user_id, path_to_file, primary)
-        raise ValueError('Invalid extension')
+        raise ValueError(f'Invalid extension with file: {path_to_file}')
