@@ -124,6 +124,8 @@ def notify_users(request, text, document):
 
 
 def add_new_document(request):
+    if request.method != 'POST':
+        return render(request, 'web/errors.html', context={'errno': '403'})
     user = check_logged_in(request)
     ext = request.FILES.get('file').name.split('.')[-1]
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
