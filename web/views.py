@@ -246,8 +246,8 @@ def search(request):
     notifications = user.profile.get_notifications()
     text = request.POST.get('text')
     personal_context = user.profile.get_statistic()
-    files_found = [Document.objects.filter(filename=text + ext).
-                       filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))
+    files_found = [Document.objects.filter(filename=text + ext).filter(Q(owner__user__username=user.username) |
+                                                                       Q(reviewer__user__username=user.username))
                    for ext in extensions]
     context = {'username': user.username, 'notifications': notifications, 'files_found': files_found}
     context.update(personal_context)
