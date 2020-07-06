@@ -14,4 +14,4 @@ def test_right_creation(path):
 def test_unsuitable_extension(path):
     with pytest.raises(ValueError) as exinfo:
         Creator.create(path, '1', True)
-    assert 'Invalid extension' == str(exinfo.value)
+    assert 'Invalid extension' in str(exinfo.value)
