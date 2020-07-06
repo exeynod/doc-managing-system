@@ -122,11 +122,28 @@ def notify_users(request, text, document):
 
 
 def add_new_document(request):
+
+    # temp set up a logger
+    import logging
+    info_logger = logging.getLogger('Info_Logger')
+    info_logger.setLevel(logging.INFO)
+    fh_info = logging.FileHandler('debug_log.log', encoding='utf-8')
+    fh_info.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    fh_info.setFormatter(formatter)
+    info_logger.addHandler(fh_info)
+    # TODO: delete this
+
+    info_logger.info(f"request.FILES.get('file')")
+
     user = check_logged_in(request)
     ext = request.FILES.get('file').name.split('.')[-1]
+
+    info_logger.info("str(request.POST.get('Filename')).replace(' ', '')")
+
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
     description = request.POST.get('description')
-    if str(description) == '<br>':
+    if str(description) == '<br>' or str(description) == '':
         description = 'Описание отсутствует'
     deadline = request.POST.get('Date')
     filepath = user_directory_path(user)
