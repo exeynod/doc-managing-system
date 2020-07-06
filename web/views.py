@@ -13,6 +13,8 @@ from pathlib import Path
 from documents.factory_document import Creator
 from django.contrib.auth.decorators import permission_required
 
+extensions = ['.pdf', '.docx']
+
 
 def index(request, alert=None):
     groups = Group.objects.all()
@@ -244,8 +246,9 @@ def search(request):
     notifications = user.profile.get_notifications()
     text = request.POST.get('text')
     personal_context = user.profile.get_statistic()
-    files_found = Document.objects.filter(filename=text). \
-        filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))
+    files_found = [Document.objects.filter(filename=text + ext).
+                       filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))
+                   for ext in extensions]
     context = {'username': user.username, 'notifications': notifications, 'files_found': files_found}
     context.update(personal_context)
     return render(request, 'web/search.html', context=context)

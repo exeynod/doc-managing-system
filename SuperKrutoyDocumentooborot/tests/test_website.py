@@ -106,19 +106,28 @@ class WebsiteTest(TestCase):
         self.login()
         context = {'text': 'Filename'}
         response = self.c.post('/search/', context)
-        self.assertEqual(len(response.context['files_found']), 0)
+        length = 0
+        for x in response.context['files_found']:
+            length += len(x)
+        self.assertEqual(length, 0)
 
     def test_wrong_search(self):
         self.test_add_new_post()
         context = {'text': 'Filename'}
         response = self.c.post('/search/', context)
-        self.assertEqual(len(response.context['files_found']), 0)
+        length = 0
+        for x in response.context['files_found']:
+            length += len(x)
+        self.assertEqual(length, 0)
 
     def test_search(self):
         self.test_add_new_post()
-        context = {'text': 'Newfile.pdf'}
+        context = {'text': 'Newfile'}
         response = self.c.post('/search/', context)
-        self.assertEqual(len(response.context['files_found']), 1)
+        length = 0
+        for x in response.context['files_found']:
+            length += len(x)
+        self.assertEqual(length, 1)
 
     def test_sign(self):
         self.test_add_new_post()
@@ -127,7 +136,7 @@ class WebsiteTest(TestCase):
         self.assertEqual(d.status, 'Готов')
         self.assertEqual(d.signed, 1)
 
-    def test_calcel(self):
+    def test_cancel(self):
         self.test_add_new_post()
         self.c.get('/Newfile.pdf/cancel/')
         d = Document.objects.get(filename='Newfile.pdf', owner__user__username='Admin')
