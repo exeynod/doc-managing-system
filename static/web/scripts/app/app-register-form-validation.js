@@ -231,3 +231,35 @@ function hideRecipient() {
 	}
 	return false;
 }
+
+function less_users(num) {
+	while(true) {
+		var current_select = document.getElementById("select-" + num.toString());
+		num++;
+		var next_select = document.getElementById("select-" + num.toString());
+		var next_li = document.getElementById("selectUser-" + num.toString());
+		if (next_select === null) {
+			num--;
+			current_select.options.selectedIndex = 0;
+			var select_li = document.getElementById("selectUser-" + num.toString());
+			select_li.style.display = 'none';
+			select_counter--;
+			break;
+		}
+		else {
+			if (next_li.style.display === 'none') {
+			num--;
+			current_select.options.selectedIndex = 0;
+			var select_li = document.getElementById("selectUser-" + num.toString());
+			select_li.style.display = 'none';
+			select_counter--;
+			break;
+		}
+		}
+		current_select.options.selectedIndex = next_select.options.selectedIndex;
+	}
+	var more_recipients_button_id = document.getElementById("more_recipients_button");
+	more_recipients_button_id.style.display = 'block';
+	hideRecipient();
+	return false;
+}
