@@ -122,9 +122,7 @@ def notify_users(request, text, document):
 
 
 def add_new_document(request):
-    user = get_user(request)
-    if isinstance(user, AnonymousUser) or request.method != 'POST':
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     filename = str(request.POST.get('Filename')).replace(' ', '')
     description = request.POST.get('description')
     if str(description) == '<br>':
@@ -222,9 +220,7 @@ def user_page(request):
 
 
 def update_account(request):
-    user = get_user(request)
-    if request.method != 'POST' or isinstance(user, AnonymousUser):
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     username = request.POST.get('username')
     email = request.POST.get('email')
     password = request.POST.get('password')
@@ -273,9 +269,7 @@ def edit_document(request, filename):
 
 
 def apply_edits(request, filename):
-    user = get_user(request)
-    if isinstance(user, AnonymousUser) or request.method != 'POST':
-        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
     recipient_counter = 1
     new_name = request.POST.get('Filename')
     description = request.POST.get('description')
