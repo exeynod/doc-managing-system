@@ -199,7 +199,8 @@
                       <div class="input-group-prepend">
                                   <span class="input-group-text" id="basic-addon1">{{ 1 }}</span>
                                     <select class="custom-select custom-select-sm" style="max-width: 200px;"
-                                            id="selectUser-1" name="selectUser-1">
+                                            id="select-1" name="selectUser-1"
+                                    onchange="return hideRecipient();">
                                       <option selected>Выберите пользователя</option>
                                             {% for person in persons %}
                                                 <option value="{{ person }}">{{ person }}</option>
@@ -216,7 +217,9 @@
                         <span class="input-group-text" id="basic-addon1">
                           {{ forloop.counter|add:"1" }}</span>
                         <select class="custom-select custom-select-sm" style="max-width: 200px;"
-                                name="selectUser-{{ forloop.counter|add:"1" }}">
+                                id="select-{{ forloop.counter|add:"1" }}"
+                                name="selectUser-{{ forloop.counter|add:"1" }}"
+                                onchange="return hideRecipient();">
                         <option selected>Выберите пользователя</option>
                         {% for person in persons %}
                         <option value="{{ person }}">{{ person }}</option>

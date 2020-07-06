@@ -192,42 +192,42 @@ function more_recipients() {
 		more_recipients_button_id.style.display = "none";
 	return false;
 }
-//
-// function hideRecipient() {
-// 	// Сделаем все опции видимыми
-// 	var visible_counter = 1;
-// 	while(true) {
-// 		var s_name = "select-" + visible_counter.toString();
-// 		var s_id = document.getElementById(s_name);
-// 		if (s_id === null)
-// 			break;
-// 		var len = s_id.options.length;
-// 		for (let i = 0; i < len; i++)
-// 			s_id.options[i].style.display = 'block';
-// 		visible_counter++;
-// 	}
-// 	// Удалим выбранные элементы
-// 	var counter = 1;
-// 	while(true) {
-// 		var select_name = "select-" + counter.toString();
-// 		var select_id = document.getElementById(select_name);
-// 		if (select_id === null)
-// 			break;
-// 		counter++;
-// 		if (select_id.value === 'Выберите пользователя')
-// 			continue;
-// 		var sel_index = select_id.selectedIndex;
-// 		var other_counter = 1;
-// 		while(true) {
-// 			var sel_name = "select-" + other_counter.toString();
-// 			var sel_id = document.getElementById(sel_name);
-// 			if (sel_id === null)
-// 				break;
-// 			other_counter++;
-// 			if (sel_id.value === 'Выберите пользователя')
-// 				continue;
-// 			sel_id.options[sel_index].style.display = 'none';
-// 		}
-// 	}
-// 	return false;
-// }
+
+function hideRecipient() {
+	// Сделаем все опции видимыми
+	var visible_counter = 1;
+	while(true) {
+		var s_name = "select-" + visible_counter.toString();
+		var s_id = document.getElementById(s_name);
+		if (s_id === null)
+			break;
+		var len = s_id.options.length;
+		for (let i = 0; i < len; i++)
+			s_id.options[i].style.display = 'block';
+		visible_counter++;
+	}
+	// Удалим выбранные элементы
+	var counter = 1;
+	while(true) {
+		var select_name = "select-" + counter.toString();
+		var select_id = document.getElementById(select_name);
+		if (select_id === null)
+			break;
+		counter++;
+		if (select_id.value === 'Выберите пользователя')
+			continue;
+		var sel_index = select_id.selectedIndex;
+		var other_counter = 1;
+		while(true) {
+			var sel_name = "select-" + other_counter.toString();
+			var sel_id = document.getElementById(sel_name);
+			if (sel_id === null)
+				break;
+			other_counter++;
+			if (sel_id === select_id)
+				continue;
+			sel_id.options[sel_index].style.display = 'none';
+		}
+	}
+	return false;
+}

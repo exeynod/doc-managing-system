@@ -176,9 +176,10 @@
                         <!-- Начало блока инициации цепочки пользователей -->
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">{{ forloop.counter }}</span>
-                        <select class="custom-select custom-select-sm"
-                                style="max-width: 200px;" name="selectUser-{{ forloop.counter }}">
-                          <option>Choose recipients</option>
+                        <select class="custom-select custom-select-sm" id="select-{{ forloop.counter }}"
+                                style="max-width: 200px;" name="selectUser-{{ forloop.counter }}"
+                        onchange="return hideRecipient();">
+                          <option>Выберите пользователя</option>
                           {% for rec in recipients %}
                           <option value="{{ person }}" selected>{{ rec }}</option>
                           {{ recipients.pop }}
@@ -196,9 +197,10 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">{{ forloop.counter|add:len|add:"1" }}</span>
                         <select class="custom-select custom-select-sm"
-                                style="max-width: 200px;"
-                                name="selectUser-{{ forloop.counter|add:len|add:'1' }}">
-                          <option>Choose recipients</option>
+                                style="max-width: 200px;" id="select-{{ forloop.counter|add:len|add:"1" }}"
+                                name="selectUser-{{ forloop.counter|add:len|add:'1' }}"
+                        onchange="return hideRecipient();">
+                          <option>Выберите пользователя</option>
                           {% for person in persons %}
                           <option value="{{ person }}"> {{ person }} </option>
                           {% endfor %}
