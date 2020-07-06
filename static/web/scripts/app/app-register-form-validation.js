@@ -142,10 +142,9 @@ function postValidation() {
 
 	if (ext === 'pdf' || ext === 'docx') {
 		emptyFileId.style.display = 'none';
-		return false;
 	}
 	else {
-		emptyFileId.style.display = 'block;';
+		emptyFileId.style.display = 'block';
 		return false;
 	}
 
