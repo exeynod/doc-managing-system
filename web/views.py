@@ -13,6 +13,8 @@ from pathlib import Path
 from documents.factory_document import Creator
 from django.contrib.auth.decorators import permission_required
 
+extensions = ['.pdf', '.docx']
+
 
 def index(request, alert=None):
     groups = Group.objects.all()
@@ -122,26 +124,27 @@ def notify_users(request, text, document):
 
 
 def add_new_document(request):
+    if request.method != 'POST':
+        return render(request, 'web/errors.html', context={'errno': '403'})
+    user = check_logged_in(request)
+    ext = request.FILES.get('file').name.split('.')[-1]
 
-    # temp set up a logger
+    # Temp logging
     import logging
     info_logger = logging.getLogger('Info_Logger')
     info_logger.setLevel(logging.INFO)
-    fh_info = logging.FileHandler('debug_log.log', encoding='utf-8')
+    fh_info = logging.FileHandler('good_log.log', encoding='utf-8')
     fh_info.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     fh_info.setFormatter(formatter)
     info_logger.addHandler(fh_info)
     # TODO: delete this
 
-    info_logger.info(f"request.FILES.get('file')")
-
-    user = check_logged_in(request)
-    ext = request.FILES.get('file').name.split('.')[-1]
-
     info_logger.info("str(request.POST.get('Filename')).replace(' ', '')")
 
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
+    if filename.count(ext) == 0:
+        filename = filename + '.' + ext
     description = request.POST.get('description')
     if str(description) == '<br>' or str(description) == '':
         description = 'Описание отсутствует'
@@ -261,8 +264,9 @@ def search(request):
     notifications = user.profile.get_notifications()
     text = request.POST.get('text')
     personal_context = user.profile.get_statistic()
-    files_found = Document.objects.filter(filename=text). \
-        filter(Q(owner__user__username=user.username) | Q(reviewer__user__username=user.username))
+    files_found = [Document.objects.filter(filename=text + ext).filter(Q(owner__user__username=user.username) |
+                                                                       Q(reviewer__user__username=user.username))
+                   for ext in extensions]
     context = {'username': user.username, 'notifications': notifications, 'files_found': files_found}
     context.update(personal_context)
     return render(request, 'web/search.html', context=context)

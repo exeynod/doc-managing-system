@@ -211,7 +211,8 @@
                         </tr>
                       </thead>
                       <tbody>
-                      {% for document in files_found %}
+                      {% for set in files_found %}
+                          {% for document in set %}
                         <tr>
                           <td>{{ forloop.counter }}</td>
                           <td>{{ document.filename }}</td>
@@ -230,6 +231,7 @@
                           <td><input type="button" class="mb-2 btn btn-sm btn-primary mr-1" value="Обзор"
                           onclick="window.location.href='{% url "web:document_review" document.filename %}'"></td>
                         </tr>
+                      {%  endfor %}
                       {% endfor %}
                       </tbody>
                     </table>
