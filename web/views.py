@@ -129,7 +129,7 @@ def add_new_document(request):
     user = check_logged_in(request)
 
     # Temp logging
-    log = open('temp_log.txt', 'w', encoding='utf-8')
+    log = open('/home/CI/python-dev-project/temp_log.txt', 'w', encoding='utf-8')
     # TODO: delete this
 
     log.write(f"FILES GET: {request.FILES.get('file')}")
