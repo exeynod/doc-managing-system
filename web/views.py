@@ -127,20 +127,15 @@ def add_new_document(request):
     if request.method != 'POST':
         return render(request, 'web/errors.html', context={'errno': '403'})
     user = check_logged_in(request)
-    ext = request.FILES.get('file').name.split('.')[-1]
 
     # Temp logging
-    import logging
-    info_logger = logging.getLogger('Info_Logger')
-    info_logger.setLevel(logging.INFO)
-    fh_info = logging.FileHandler('info_log.log', encoding='utf-8')
-    fh_info.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    fh_info.setFormatter(formatter)
-    info_logger.addHandler(fh_info)
+    log = open('temp_log.txt', 'w', encoding='utf-8')
     # TODO: delete this
 
-    info_logger.info("str(request.POST.get('Filename')).replace(' ', '')")
+    log.write(f"FILES GET: {request.FILES.get('file')}")
+    ext = request.FILES.get('file').name.split('.')[-1]
+
+    log.write(f"POST filename: {str(request.POST.get('Filename')).replace(' ', '')}")
 
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
     if filename.count(ext) == 0:
