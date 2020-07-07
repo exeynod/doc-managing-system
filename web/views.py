@@ -127,19 +127,10 @@ def add_new_document(request):
     if request.method != 'POST':
         return render(request, 'web/errors.html', context={'errno': '403'})
     user = check_logged_in(request)
-
-    # Temp logging
-    log = open('/home/CI/python-dev-project/temp_log.txt', 'w', encoding='utf-8')
-    # TODO: delete this
-
-    log.write(f"FILES GET: {request.FILES.get('file')}")
     ext = request.FILES.get('file').name.split('.')[-1]
-
-    log.write(f"POST filename: {str(request.POST.get('Filename')).replace(' ', '')}")
-
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
-    if filename.count(ext) == 0:
-        filename = filename + '.' + ext
+    if ext == 'docx':
+        filename = f'{filename}.docx'
     description = request.POST.get('description')
     if str(description) == '<br>' or str(description) == '':
         description = 'Описание отсутствует'
