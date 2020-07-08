@@ -28,7 +28,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - $FINGERPRINT
-      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install django gunicorn psycopg2-binary && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py makemigrations web && python manage.py migrate && deactivate && sudo systemctl restart nginx && echo Done! && exit'
+      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install django gunicorn psycopg2-binary && pip install -r requirements.txt && sudo python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py makemigrations web && python manage.py migrate && deactivate && sudo systemctl restart nginx && echo Done! && exit'
 
 workflows:
   build-test-and-deploy:

@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'SuperKrutoyDocumentooborot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'documentooborot',
-        'USER': 'django',
-        'PASSWORD': 'django',
+        'NAME': 'myproject',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 db_from_env = dj_database_url.config(conn_max_age=500)
