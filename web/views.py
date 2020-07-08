@@ -183,7 +183,7 @@ def review(request, filename):
                'filename': filename, 'file_date': file.date,
                'description': file.description, 'owner': owner.id == user.id,
                'reviewer': reviewer, 'status': str(file.status),
-               'signed': sd.who_signed().count(user.id) != 0, 'signs': signs,
+               'signed': sd.who_signed().count(str(user.id)) != 0, 'signs': signs,
                'notifications': notifications}
     context.update(personal_context)
     return render(request, 'web/document_review.html', context)
