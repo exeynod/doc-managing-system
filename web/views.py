@@ -130,7 +130,7 @@ def add_new_document(request):
     ext = request.FILES.get('file').name.split('.')[-1]
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
     description = request.POST.get('description')
-    if str(description) == '<br>':
+    if str(description) == '<br>' or str(description) == '':
         description = 'Описание отсутствует'
     deadline = request.POST.get('Date')
     filepath = user_directory_path(user)
