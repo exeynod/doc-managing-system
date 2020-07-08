@@ -1,0 +1,44 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  test-codestyle:
+    executor: python/default
+    steps:
+      - checkout
+      - run: pip install flake8
+      - run: flake8 documents SuperKrutoyDocumentooborot web --max-line-length=120
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run: python -m pytest SuperKrutoyDocumentooborot/tests --ignore=SuperKrutoyDocumentooborot/tests/test_website.py
+      - run: python manage.py makemigrations --settings=SuperKrutoyDocumentooborot.CI_settings
+      - run: python manage.py migrate --settings=SuperKrutoyDocumentooborot.CI_settings
+      - run: python manage.py test --settings=SuperKrutoyDocumentooborot.CI_settings
+  deploy:
+    executor: python/default
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - $FINGERPRINT
+      - run: ssh -o StrictHostKeyChecking=no CI@$HOST 'cd ./python-dev-project && git pull origin master && source ./myprojectenv/bin/activate && pip install django gunicorn psycopg2-binary && pip install -r requirements.txt && sudo python manage.py collectstatic --noinput && python manage.py makemigrations && python manage.py makemigrations web && python manage.py migrate && deactivate && sudo systemctl daemon-reload && sudo systemctl restart gunicorn && sudo systemctl restart nginx &&  echo Done! && exit'
+
+workflows:
+  build-test-and-deploy:
+    jobs:
+      - build-and-test
+      - test-codestyle
+      - deploy:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build-and-test
+            - test-codestyle
