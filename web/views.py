@@ -129,8 +129,6 @@ def add_new_document(request):
     user = check_logged_in(request)
     ext = request.FILES.get('file').name.split('.')[-1]
     filename = str(request.POST.get('Filename')).replace(' ', '') + '.' + ext
-    if filename.count(ext) == 0:
-        filename = filename + '.' + ext
     description = request.POST.get('description')
     if str(description) == '<br>':
         description = 'Описание отсутствует'
