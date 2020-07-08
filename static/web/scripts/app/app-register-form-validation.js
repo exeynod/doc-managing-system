@@ -48,7 +48,7 @@ function correctEmail(emailId) {
 }
 
 function matchesPasswords(p1, p2) {
-	if (p1.value === p2.value)
+	if (p1.value === p2.value && p1.value.toString().trim() !== '')
 		return true;
 	return false;
 }
